@@ -1,0 +1,39 @@
+<format name="dat" endian="BE">
+	<type typename="header">
+		<string name="FOURCC" size="4" assert_value="1" value="DAT"/>
+		<!-- a dat file contains less than 'file_count' files. -->
+		<uint32 name="file_count"/>
+		<uint32 name="blk_file_off_off" assert_value="1" value="0x20"/>
+		<uint32 name="blk_ext_off" comment="points to a block of filename extensions."/>
+		<uint32 name="blk_filename_off" comment="points to a block of filenames."/>
+		<uint32 name="blk_file_size_off" comment="point to a block of file size."/>
+		<uint32 name="dummy0"  assert_value="1" value="0"/>
+		<uint32 name="dummy1"  assert_value="1" value="0"/>
+	</type>
+	<type typename="blk_ext">
+		<require name="file_count"/>
+		<list name="ext_list" size="file_count">
+			<string null_terminated='1'/>
+		</list>
+	</type>
+	<type typename="blk_filename">
+		<require name="file_count"/>
+		<uint32 name="length"/>
+		<list name="filename_list" size="file_count">
+			<string size="length"/>
+		</list>
+		<align size="0x4"/>
+	</type>
+	<type typename="blk_file_off">
+		<require name="file_count"/>
+		<list name="file_off_list" size="file_count">
+			<uint32/>
+		</list>
+	</type>
+	<type typename="blk_file_size">
+		<require name="file_count"/>
+		<list name="file_size_list" size="file_count">
+			<uint32/>
+		</list>
+	</type>	
+</format>

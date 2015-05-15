@@ -1,0 +1,31 @@
+<format name="wtb" endian="BE">
+	<!-- come back to look at this later .. -->
+	<type typename="header">
+		<string name="FOURCC" size="4" assert_value="1" value="\x00BTW"/>
+		<uint32 name="unk0" value_statistic='1'/>
+		<uint32 name="tex_count" />
+		<uint32 name="blk_tex_off_off" />
+		<uint32 name="blk_tex_size_off" />
+		<uint32 name="blk_tex_flag_off" />
+		<uint32 name="checksum"/>
+		<uint32 name="blk_tex_header_off" comment="if nonzero, texture headers are stored together~"/>
+	</type>
+	<type typename="blk_tex_off">
+		<require name="tex_count"/>
+		<list name="tex_off_list" size="tex_count">
+			<uint32/>
+		</list>
+	</type>
+	<type typename="blk_tex_size">
+		<require name="tex_count" />
+		<list name="tex_size_list" size="tex_count">
+			<uint32/>
+		</list>
+	</type>
+	<type typename="blk_tex_flag">
+		<require name="tex_count" />
+		<list name="tex_flag_list" size="tex_flag">
+			<uint32/>
+		</list>
+	</type>		
+</format>

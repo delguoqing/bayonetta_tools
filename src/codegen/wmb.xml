@@ -1,0 +1,57 @@
+<format name="wmb" ver="xb" endian="BE">
+	<type typename="header">
+		<string name="FOURCC" size="4" assert_value="1" value="\x00BMW"/>
+		<uint32 name="unk0"/>
+		<uint16 name="unk1"/>
+		<uint16 name="unk2"/>
+		<uint32 name="numVerts"/>
+		<uint16 name="unk3"/>
+		<uint16 name="unk4"/>
+		<uint32 name="unk5"/>
+		<uint32 name="ofsVerts"/>
+		<uint32 name="ofsVertExData"/>
+		<uint32 name="unk6"/>
+		<uint32 name="unk7"/>
+		<uint32 name="unk8"/>
+		<uint32 name="unk9"/>
+		<uint32 name="numBones"/>
+		<uint32 name="ofsBoneHie"/>
+		<uint32 name="ofsBoneDataA"/>
+		<uint32 name="ofsBoneDataB"/>
+		<uint32 name="ofsBoneHieB"/>
+		<uint32 name="numMaterials"/>
+		<uint32 name="ofsMaterialsOfs"/>
+		<uint32 name="ofsMaterials"/>
+		<uint32 name="numMeshes"/>
+		<uint32 name="ofsMesheOfs"/>
+		<uint32 name="ofsMeshes"/>
+		<uint32 name="unk10"/>
+		<uint32 name="unk11"/>
+		<uint32 name="ofsUnknownJ"/>
+		<uint32 name="ofsUnknownK"/>
+		<uint32 name="ofsUnknownL"/>
+		<type name="hehe" typename="blk_tex_off"/>
+		<list name="exMatInfo" size="4">
+			<uint32/>
+		</list>
+	</type>
+	
+	<type typename="blk_tex_off">
+		<require name="tex_count"/>
+		<list name="tex_off_list" size="self.tex_count">
+			<uint32/>
+		</list>
+	</type>
+	<type typename="blk_tex_size">
+		<require name="tex_count" />
+		<list name="tex_size_list" size="self.tex_count">
+			<uint32/>
+		</list>
+	</type>
+	<type typename="blk_tex_flag">
+		<require name="tex_count" />
+		<list name="tex_flag_list" size="self.tex_count">
+			<uint32/>
+		</list>
+	</type>		
+</format>

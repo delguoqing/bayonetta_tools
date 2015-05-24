@@ -16,7 +16,7 @@
 	
 <!-- declare -->
 <xsl:template match="jump_to" mode="declare_and_load">
-&sep;f.seek(<xsl:value-of select="@offset"/>, 0)&sep;
+&sep;f.seek(<xsl:if test="@is_var='1'">self.</xsl:if><xsl:value-of select="@offset"/>, 0)&sep;
 </xsl:template>
 <xsl:template match="skip" mode="declare_and_load">
 &sep;f.seek(<xsl:value-of select="@size"/>, 1)&sep;
@@ -92,7 +92,7 @@
 <xsl:template match="unicode" mode="value">u'<xsl:value-of select="@value"/>'</xsl:template>
 
 <!-- size -->
-<xsl:template match="*[@dummy_value]|require" mode="size">0</xsl:template>
+<xsl:template match="*[@dummy_value]|require|jump_to" mode="size">0</xsl:template>
 <xsl:template match="uint8|int8|bool" mode="size">1</xsl:template>
 <xsl:template match="uint16|int16|fixed16" mode="size">2</xsl:template>
 <xsl:template match="uint32|int32|float" mode="size">4</xsl:template>
@@ -101,6 +101,7 @@
 &sep;cls_<xsl:value-of select="@typename"/>.get_unit_size()&sep;
 </xsl:template>
 <xsl:template match="list" mode="size">
+<xsl:if test="@is_var='1'">self.</xsl:if>
 <xsl:value-of select="@size"/> * <xsl:apply-templates select="./*" mode="size"/>
 </xsl:template>
 

@@ -1,19 +1,16 @@
 <format name="wmb" ver="xb" endian="BE">
-	<type typename="header">
-		<string name="FOURCC" size="4" assert_value="1" value="\x00BMW"/>
-		<uint32 name="unk0"/>
-		<uint16 name="unk1"/>
-		<uint16 name="unk2"/>
+	<type typename="header" base_module='1'>
+		<string name="FOURCC" size="4" assert_value="1" value="\0BMW"/>
+		<uint32 name="unknownA"/>
+		<uint16 name="unknownB"/>
+		<uint16 name="unknownC"/>
 		<uint32 name="numVerts"/>
-		<uint16 name="unk3"/>
-		<uint16 name="unk4"/>
-		<uint32 name="unk5"/>
+		<uint16 name="unknownD"/>
+		<uint16 name="unknownE"/>
+		<uint32 name="unknownF"/>
 		<uint32 name="ofsVerts"/>
 		<uint32 name="ofsVertExData"/>
-		<uint32 name="unk6"/>
-		<uint32 name="unk7"/>
-		<uint32 name="unk8"/>
-		<uint32 name="unk9"/>
+		<list name="unknownG" size="4"><uint32/></list>
 		<uint32 name="numBones"/>
 		<uint32 name="ofsBoneHie"/>
 		<uint32 name="ofsBoneDataA"/>
@@ -25,32 +22,84 @@
 		<uint32 name="numMeshes"/>
 		<uint32 name="ofsMesheOfs"/>
 		<uint32 name="ofsMeshes"/>
-		<uint32 name="unk10"/>
-		<uint32 name="unk11"/>
+		<uint32 name="unknownK"/>
+		<uint32 name="unknownL"/>
 		<uint32 name="ofsUnknownJ"/>
 		<uint32 name="ofsUnknownK"/>
 		<uint32 name="ofsUnknownL"/>
-		<list name="exMatInfo" size="4">
-			<uint32/>
-		</list>
+		<list name="exMatInfo" size="4"><uint32/></list>
+		
+		<jump_to offset="ofsMaterialsOfs" is_var='1'/>
+		<type name="blk_material_offset" typename="blk_material_offset"
+			  comment="offsets relative to material block"/>
+
+		<jump_to offset="ofsMeshes" is_var='1'/>
+		<type name="blk_mesh_offset" typename="blk_mesh_offset"
+			  comment="offsets relative to mesh block."/>
+		
+		<jump_to offset="ofsVerts" is_var='1'/>
+		<type name="blk_verts" typename="blk_verts"/>
+		
 	</type>
 	
-	<type typename="blk_tex_off">
-		<require name="tex_count"/>
-		<list name="tex_off_list" size="self.tex_count">
-			<uint32/>
-		</list>
+	<type typename="blk_material_offset">
+		<require name="numMaterials"/>
+		<list name="offset_list" size="numMaterials" is_var='1'><uint32/></list>
 	</type>
-	<type typename="blk_tex_size">
-		<require name="tex_count" />
-		<list name="tex_size_list" size="self.tex_count">
-			<uint32/>
-		</list>
+
+	<type typename="blk_mesh_offset">
+		<require name="numMeshes"/>
+		<list name="offset_list" size="numMeshes" is_var='1'><uint32/></list>
 	</type>
-	<type typename="blk_tex_flag">
-		<require name="tex_count" />
-		<list name="tex_flag_list" size="self.tex_count">
-			<uint32/>
-		</list>
-	</type>		
+	
+	<type typename="blk_material_id">
+		<uint32 name="material_id_num"/>
+		<list name="id_list" size="material_id_num" is_var='1'><uint32/></list>
+	</type>
+	
+	<type typename="blk_verts">
+	</type>
+	
+	<type typename="mesh">
+		<uint16 name="id"/>
+		<uint16 name="numBatch"/>
+		<uint32 name="unknownB"/>
+		<uint32 name="batchOfs"/>
+		<uint32 name="unknwonD"/>
+		<uint32 name="unknownE"/>
+		<string name="name" size="32"/>
+		<list name="mat" size="12"><float/></list>
+	</type>
+	
+	<type typename="batch">
+		<uint32 name="id"/>
+		<uint16 name="unknownB"/>
+		<uint16 name="unknownC"/>
+		<uint8 name="texID"/>
+		<uint8 name="unknownDB"/>
+		<uint16 name="unknownE"/>
+		<uint32 name="vertStart"/>
+		<uint32 name="vertEnd"/>
+		<uint32 name="primType"/>
+		<uint32 name="ofsIndices"/>
+		<uint32 name="numIndices"/>
+		<uint32 name="vertOfs"/>
+		<list name="unknownI" size="7"><uint32/></list>
+	</type>
+	
+	<type typename="material">
+		<uint16 name="matFlags"/>
+		<uint16 name="unknownB"/>
+		<uint16 name="texFlagsA"/>
+		<uint16 name="texIdxA"/>
+		<uint16 name="texFlagsB"/>
+		<uint16 name="texIdxB"/>
+		<uint16 name="texFlagsC"/>
+		<uint16 name="texIdxC"/>
+		<uint16 name="texFlagsD"/>
+		<uint16 name="texIdxD"/>
+		<uint16 name="texFlagsE"/>
+		<uint16 name="texIdxE"/>		
+	</type>
+	
 </format>

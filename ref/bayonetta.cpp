@@ -506,6 +506,7 @@ static noesisModel_t *Model_Bayo_LoadModel(CArrayList<bayoDatFile_t> &dfiles, ba
 	LITTLE_BIG_SWAP(hdr.exMatInfo[1]);
 	LITTLE_BIG_SWAP(hdr.exMatInfo[2]);
 	LITTLE_BIG_SWAP(hdr.exMatInfo[3]);
+	// Vanq: game Vanquish by Platinum Games Inc.
 	bool isVanqModel = (hdr.unknownA < 0);
 
 	CArrayList<noesisTex_t *> textures;

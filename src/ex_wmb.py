@@ -1,23 +1,23 @@
+import wmb_types
+
 class cls_obj(object):
 	def __init__(self):
 		"""BEG FIELDS"""
 		self.FOURCC = None
-		self.blk_material_offset = None
-		self.blk_mesh_offset = None
-		self.blk_verts = None
 		self.exMatInfo = None
+		self.mesh_offset_block = None
 		self.numBones = None
 		self.numMaterials = None
-		self.numMeshes = None
 		self.numVerts = None
+		self.num_mesh = None
+		self.offset_mesh_block = None
+		self.offset_mesh_offset_block = None
 		self.ofsBoneDataA = None
 		self.ofsBoneDataB = None
 		self.ofsBoneHie = None
 		self.ofsBoneHieB = None
 		self.ofsMaterials = None
 		self.ofsMaterialsOfs = None
-		self.ofsMesheOfs = None
-		self.ofsMeshes = None
 		self.ofsUnknownJ = None
 		self.ofsUnknownK = None
 		self.ofsUnknownL = None
@@ -33,3 +33,20 @@ class cls_obj(object):
 		self.unknownK = None
 		self.unknownL = None
 		"""END FIELDS"""
+		self.meshes = None
+		
+	def post_parse(self, f):
+		self.parse_meshes(f)
+		
+	def parse_meshes(self, f):
+		self.meshes = []
+		for i in xrange(self.num_mesh):
+			offset = self.offset_mesh_block + self.mesh_offset_block.offset_list[i]
+			f.seek(offset, 0)
+			print "mesh offset 0x%x" % offset 
+			mesh = wmb_types.cls_mesh(f)
+			
+			f.seek(offset, 0)
+			mesh.parse_batches(f)
+			self.meshes.append(mesh)
+	

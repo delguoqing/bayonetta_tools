@@ -1,5 +1,5 @@
 <format name="wmb" ver="xb" endian="BE">
-	<type typename="header" base_module='1'>
+	<type typename="wmb" base_module='1' log='1'>
 		<string name="FOURCC" size="4" assert_value="1" value="\0BMW"/>
 		<uint32 name="unknownA"/>
 		<uint16 name="unknownB"/>
@@ -8,7 +8,7 @@
 		<uint16 name="unknownD"/>
 		<uint16 name="unknownE"/>
 		<uint32 name="unknownF"/>
-		<uint32 name="ofsVerts"/>
+		<uint32 name="ofsVerts" log='1'/>
 		<uint32 name="ofsVertExData"/>
 		<list name="unknownG" size="4"><uint32/></list>
 		<uint32 name="numBones"/>
@@ -19,27 +19,19 @@
 		<uint32 name="numMaterials"/>
 		<uint32 name="ofsMaterialsOfs"/>
 		<uint32 name="ofsMaterials"/>
-		<uint32 name="numMeshes"/>
-		<uint32 name="ofsMesheOfs"/>
-		<uint32 name="ofsMeshes"/>
+		<uint32 name="num_mesh" log='1'/>
+		<uint32 name="offset_mesh_offset_block" log='1'/>
+		<uint32 name="offset_mesh_block" log='1'/>
 		<uint32 name="unknownK"/>
 		<uint32 name="unknownL"/>
 		<uint32 name="ofsUnknownJ"/>
 		<uint32 name="ofsUnknownK"/>
 		<uint32 name="ofsUnknownL"/>
 		<list name="exMatInfo" size="4"><uint32/></list>
-		
-		<jump_to offset="ofsMaterialsOfs" is_var='1'/>
-		<type name="blk_material_offset" typename="blk_material_offset"
-			  comment="offsets relative to material block"/>
-
-		<jump_to offset="ofsMeshes" is_var='1'/>
-		<type name="blk_mesh_offset" typename="blk_mesh_offset"
+			
+		<jump_to offset="offset_mesh_offset_block" is_var='1'/>
+		<type name="mesh_offset_block" typename="mesh_offset_block"
 			  comment="offsets relative to mesh block."/>
-		
-		<jump_to offset="ofsVerts" is_var='1'/>
-		<type name="blk_verts" typename="blk_verts"/>
-		
 	</type>
 	
 	<type typename="blk_material_offset">
@@ -47,9 +39,14 @@
 		<list name="offset_list" size="numMaterials" is_var='1'><uint32/></list>
 	</type>
 
-	<type typename="blk_mesh_offset">
-		<require name="numMeshes"/>
-		<list name="offset_list" size="numMeshes" is_var='1'><uint32/></list>
+	<type typename="mesh_offset_block">
+		<require name="num_mesh"/>
+		<list name="offset_list" size="num_mesh" is_var='1'><uint32/></list>
+	</type>
+	
+	<type typename="batch_offset_block">
+		<require name="num_batch"/>
+		<list name="offset_list" size="num_batch" is_var='1'><uint32/></list>
 	</type>
 	
 	<type typename="blk_material_id">
@@ -57,18 +54,21 @@
 		<list name="id_list" size="material_id_num" is_var='1'><uint32/></list>
 	</type>
 	
-	<type typename="blk_verts">
+	<type typename="blk_vertex">
 	</type>
 	
-	<type typename="mesh">
-		<uint16 name="id"/>
-		<uint16 name="numBatch"/>
-		<uint32 name="unknownB"/>
-		<uint32 name="batchOfs"/>
-		<uint32 name="unknwonD"/>
-		<uint32 name="unknownE"/>
-		<string name="name" size="32"/>
-		<list name="mat" size="12"><float/></list>
+	<type typename="mesh" log='1' base_module='1'>
+		<uint16 name="id" log='1'/>
+		<uint16 name="num_batch" log='1'/>
+		<uint32 name="unknownB" log='1'/>
+		<uint32 name="offset_batch_offset_block" log='1'/>
+		<uint32 name="unknwonD" log='1'/>
+		<uint32 name="unknownE" log='1'/>
+		<uint32 name="unknownF" log='1'/>
+		<uint32 name="unknownG" log='1'/>
+		<uint32 name="unknownH" log='1'/>
+		<string name="name" size="32" log='1'/>
+		<list name="mat" size="12" log='1'><float/></list>
 	</type>
 	
 	<type typename="batch">
@@ -102,4 +102,9 @@
 		<uint16 name="texIdxE"/>		
 	</type>
 	
+	<type typename="vertex">
+		<float name="x"/>
+		<float name="y"/>
+		<float name="z"/>
+	</type>
 </format>

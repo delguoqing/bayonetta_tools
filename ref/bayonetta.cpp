@@ -685,6 +685,7 @@ static noesisModel_t *Model_Bayo_LoadModel(CArrayList<bayoDatFile_t> &dfiles, ba
 			int vertOfs = batch.vertOfs;
 
 			//bind positions
+			// rpgBindPositionBuffer(ptr, type, stride)
 			rapi->rpgBindPositionBuffer(vertData + vertOfs*bayoVertSize, RPGEODATA_FLOAT, bayoVertSize); 
 			//bind normals
 			rapi->rpgBindNormalBuffer(normals + vertOfs*3, RPGEODATA_FLOAT, sizeof(float)*3); 

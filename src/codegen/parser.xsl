@@ -13,12 +13,15 @@
 		xmlns:exsl="http://exslt.org/common"
 		extension-element-prefixes="exsl"
 		version="1.0">
-	
+
 <xsl:import href="basics.xsl"/>
 
 <!-- parser -->	
 <xsl:template match="format">
 <exsl:document href="g_{/format/@name}_parser_{/format/@ver}.py" method="text">
+	
+<xsl:variable name="root" select="/"/>
+
 <xsl:text># -*- coding: utf-8</xsl:text>
 <xsl:text>#</xsl:text>
 # g_<xsl:value-of select="@name"/>_parser_<xsl:value-of select="@ver"/>.py
@@ -27,6 +30,7 @@
 # DO NOT MODIFY
 #
 import struct
+
 <xsl:for-each select="./*[@base_module]"><xsl:text>
 </xsl:text>
 	<xsl:call-template name="import_base_module"/>
@@ -48,7 +52,9 @@ class cls_<xsl:value-of select="@typename"/>(<xsl:call-template name="base"/>):
 		# <xsl:value-of select="@comment"/>
 		</xsl:if><xsl:text>
 		</xsl:text>
-		<xsl:apply-templates select="." mode="declare_and_load"/>
+		<xsl:apply-templates select="." mode="declare_and_load">
+			<xsl:with-param name="root" select="exsl:node-set($root)"/>
+		</xsl:apply-templates>
 		</xsl:for-each>
 		<xsl:if test="@log='1'">
 		if self.need_log(): print repr(self)&sep;
@@ -103,6 +109,7 @@ if __name__ == "__main__":&sep;
 	assert cls_<xsl:value-of select="@typename"/>.get_unit_size() == <xsl:value-of select="@size"/>, "in cls_<xsl:value-of select="@typename"/>: size assert failed!!! 0x%x" % cls_<xsl:value-of select="@typename"/>.get_unit_size()&e2;
 	</xsl:if>			
 </xsl:for-each>
+	pass
 </exsl:document>
 </xsl:template>
 

@@ -28,7 +28,14 @@
 &sep;self.<xsl:value-of select="@name"/> = <xsl:value-of select="@name"/>		
 </xsl:template>
 <xsl:template match="*" mode="declare_and_load">
-&sep;self.<xsl:value-of select="@name"/> = <xsl:apply-templates select="." mode="load_from_file"/>&sep;
+	<xsl:param name="root"/>
+	
+<!-- self.var_name = var_value -->	
+&sep;self.<xsl:value-of select="@name"/> = &sep;
+<xsl:apply-templates select="." mode="load_from_file">
+	<xsl:with-param name="root" select="exsl:node-set($root)"/>
+</xsl:apply-templates>&sep;
+
 	<xsl:if test="@assert_value='1'">
 &sep;;assert self.<xsl:value-of select="@name"/> == <xsl:apply-templates select="." mode="value"/>,&sep;
 &sep;"value assert fail for '<xsl:value-of select="@name"/>': expect <xsl:apply-templates select="." mode="value"/>, get %r" % self.<xsl:value-of select="@name"/>
@@ -52,15 +59,15 @@
 </xsl:template>
 
 <xsl:template match="fixed16" mode="load_from_file">
-	&sep;((<xsl:call-template name="numeric_type" select="." mode="struct"/>)*1.0/(1&lt;&lt;<xsl:value-of select="@shift"/>))&sep;
+	&sep;((<xsl:call-template name="numeric_type"/>)*1.0/(1&lt;&lt;<xsl:value-of select="@shift"/>))&sep;
 </xsl:template>
 
 <xsl:template match="bool" mode="load_from_file">
-&sep;bool(<xsl:call-template name="numeric_type" select="." mode="struct"/>)&sep;
+&sep;bool(<xsl:call-template name="numeric_type"/>)&sep;
 </xsl:template>
 
 <xsl:template match="string" mode="load_from_file">
-	<xsl:call-template name="numeric_type" select="." mode="struct"/>.rstrip("\x00")&sep;
+	<xsl:call-template name="numeric_type"/>.rstrip("\x00")&sep;
 </xsl:template>
 
 <xsl:template match="list" mode="load_from_file">
@@ -70,7 +77,13 @@
 &sep;]</xsl:template>
 
 <xsl:template match="type" mode="load_from_file">
-&sep;cls_<xsl:value-of select="@typename"/>(f)&sep;
+	<xsl:param name="root"/>
+	
+&sep;cls_<xsl:value-of select="@typename"/>(f&sep;
+<xsl:call-template name="pack_args">
+	<xsl:with-param name="root" select="exsl:node-set($root)"/>
+</xsl:call-template>)&sep;
+
 </xsl:template>
 
 <!-- value -->
@@ -170,8 +183,9 @@
 	</xsl:for-each>
 </xsl:template>
 <xsl:template name="pack_args">
-	<xsl:value-of select="name()"/>
-	<xsl:for-each select="./*">
+	<xsl:param name="root"/>
+	<xsl:variable name="my_typename" select="@typename"/>
+	<xsl:for-each select="exsl:node-set($root)/format/type[@typename = $my_typename]/require">
 		&sep;, self.<xsl:value-of select="@name"/>
 	</xsl:for-each>
 </xsl:template>

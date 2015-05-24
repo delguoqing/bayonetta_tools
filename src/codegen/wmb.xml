@@ -30,7 +30,6 @@
 		<uint32 name="ofsUnknownJ"/>
 		<uint32 name="ofsUnknownK"/>
 		<uint32 name="ofsUnknownL"/>
-		<type name="hehe" typename="blk_tex_off"/>
 		<list name="exMatInfo" size="4">
 			<uint32/>
 		</list>

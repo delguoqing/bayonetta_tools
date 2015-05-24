@@ -6,12 +6,13 @@ class cls_obj(object):
 		self.FOURCC = None
 		self.exMatInfo = None
 		self.mesh_offset_block = None
-		self.numBones = None
 		self.numMaterials = None
 		self.numVerts = None
+		self.num_bone = None
 		self.num_mesh = None
 		self.offset_mesh_block = None
 		self.offset_mesh_offset_block = None
+		self.offset_vertex_block = None
 		self.ofsBoneDataA = None
 		self.ofsBoneDataB = None
 		self.ofsBoneHie = None
@@ -22,7 +23,6 @@ class cls_obj(object):
 		self.ofsUnknownK = None
 		self.ofsUnknownL = None
 		self.ofsVertExData = None
-		self.ofsVerts = None
 		self.unknownA = None
 		self.unknownB = None
 		self.unknownC = None
@@ -44,7 +44,7 @@ class cls_obj(object):
 			offset = self.offset_mesh_block + self.mesh_offset_block.offset_list[i]
 			f.seek(offset, 0)
 			print "mesh offset 0x%x" % offset 
-			mesh = wmb_types.cls_mesh(f)
+			mesh = wmb_types.cls_mesh(f, self.offset_vertex_block, self.num_bone)
 			
 			f.seek(offset, 0)
 			mesh.parse_batches(f)

@@ -7,7 +7,9 @@ class cls_obj(object):
 		self.mat = None
 		self.name = None
 		self.num_batch = None
+		self.num_bone = None
 		self.offset_batch_offset_block = None
+		self.offset_vertex_block = None
 		self.unknownB = None
 		self.unknownE = None
 		self.unknownF = None
@@ -25,6 +27,7 @@ class cls_obj(object):
 		for i in xrange(self.num_batch):
 			batch_offset = offset + self.batch_offset_block.offset_list[i]
 			f.seek(batch_offset)
-			batch = wmb_types.cls_batch(f)
+			batch = wmb_types.cls_batch(f, self.offset_vertex_block, self.num_bone)
+			batch.parse_batch(f, )
 			self.batches.append(batch)
 	

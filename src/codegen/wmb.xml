@@ -8,10 +8,10 @@
 		<uint16 name="unknownD"/>
 		<uint16 name="unknownE"/>
 		<uint32 name="unknownF"/>
-		<uint32 name="ofsVerts" log='1'/>
+		<uint32 name="offset_vertex_block" log='1'/>
 		<uint32 name="ofsVertExData"/>
 		<list name="unknownG" size="4"><uint32/></list>
-		<uint32 name="numBones"/>
+		<uint32 name="num_bone" log='1'/>
 		<uint32 name="ofsBoneHie"/>
 		<uint32 name="ofsBoneDataA"/>
 		<uint32 name="ofsBoneDataB"/>
@@ -57,7 +57,9 @@
 	<type typename="blk_vertex">
 	</type>
 	
-	<type typename="mesh" log='1' base_module='1'>
+	<type typename="mesh" log='0' base_module='1'>
+		<require name="offset_vertex_block"/>
+		<require name="num_bone"/>
 		<uint16 name="id" log='1'/>
 		<uint16 name="num_batch" log='1'/>
 		<uint32 name="unknownB" log='1'/>
@@ -71,7 +73,9 @@
 		<list name="mat" size="12" log='1'><float/></list>
 	</type>
 	
-	<type typename="batch">
+	<type typename="batch" base_module='1' log='1'>
+		<require name="offset_vertex_block"/>
+		<require name="num_bone"/>
 		<uint32 name="id"/>
 		<uint16 name="unknownB"/>
 		<uint16 name="unknownC"/>
@@ -80,10 +84,10 @@
 		<uint16 name="unknownE"/>
 		<uint32 name="vertStart"/>
 		<uint32 name="vertEnd"/>
-		<uint32 name="primType"/>
-		<uint32 name="ofsIndices"/>
-		<uint32 name="numIndices"/>
-		<uint32 name="vertOfs"/>
+		<uint32 name="primType" log='1'/>
+		<uint32 name="offset_index"/>
+		<uint32 name="num_index"/>
+		<uint32 name="offset_vertex" comment="relative to vertex block"/>
 		<list name="unknownI" size="7"><uint32/></list>
 	</type>
 	
@@ -102,9 +106,15 @@
 		<uint16 name="texIdxE"/>		
 	</type>
 	
-	<type typename="vertex">
+	<type typename="vertex_format_vt">
 		<float name="x"/>
 		<float name="y"/>
 		<float name="z"/>
 	</type>
+	
+	<type typename="vertex_format_vtw">
+		<float name="x"/>
+		<float name="y"/>
+		<float name="z"/>
+	</type>	
 </format>

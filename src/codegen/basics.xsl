@@ -62,6 +62,10 @@
 	&sep;((<xsl:call-template name="numeric_type"/>)*1.0/(1&lt;&lt;<xsl:value-of select="@shift"/>))&sep;
 </xsl:template>
 
+<xsl:template match="float16" mode="load_from_file">
+	&sep;numpy.frombuffer(buffer(f.read(2)), dtype=numpy.dtype("<xsl:call-template name="endian"/>f2"))[0]&sep;
+</xsl:template>
+
 <xsl:template match="bool" mode="load_from_file">
 &sep;bool(<xsl:call-template name="numeric_type"/>)&sep;
 </xsl:template>
@@ -87,14 +91,14 @@
 </xsl:template>
 
 <!-- value -->
-<xsl:template match="int8|uint8|int16|uint16|int32|uint32|float|string|fixed16" mode="value"><xsl:value-of select="@value"/></xsl:template>
+<xsl:template match="int8|uint8|int16|uint16|int32|uint32|float|float16|string|fixed16" mode="value"><xsl:value-of select="@value"/></xsl:template>
 <xsl:template match="string" mode="value">'<xsl:value-of select="@value"/>'</xsl:template>
 <xsl:template match="unicode" mode="value">u'<xsl:value-of select="@value"/>'</xsl:template>
 
 <!-- size -->
 <xsl:template match="*[@dummy_value]|require|jump_to" mode="size">0</xsl:template>
 <xsl:template match="uint8|int8|bool" mode="size">1</xsl:template>
-<xsl:template match="uint16|int16|fixed16" mode="size">2</xsl:template>
+<xsl:template match="uint16|int16|fixed16|float16" mode="size">2</xsl:template>
 <xsl:template match="uint32|int32|float" mode="size">4</xsl:template>
 <xsl:template match="string" mode="size"><xsl:value-of select="@size"/></xsl:template>
 <xsl:template match="type" mode="size">
@@ -144,7 +148,7 @@
 <!-- default value -->
 <xsl:template match="uint8|int8|uint16|int16|uint32|int32">0</xsl:template>
 <xsl:template match="bool">False</xsl:template>
-<xsl:template match="float|fixed16">0.0</xsl:template>
+<xsl:template match="float|float16|fixed16">0.0</xsl:template>
 <xsl:template match="null">None</xsl:template>
 <xsl:template match="string">""</xsl:template>
 <xsl:template match="list">[]</xsl:template>

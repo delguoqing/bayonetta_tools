@@ -12,16 +12,17 @@
 		<uint32 name="ofsVertExData"/>
 		<list name="unknownG" size="4"><uint32/></list>
 		<uint32 name="num_bone" log='1'/>
-		<uint32 name="ofsBoneHie"/>
+		<uint32 name="ofsBoneHie" comment="Hie for Hierarchy"/>
 		<uint32 name="ofsBoneDataA"/>
 		<uint32 name="ofsBoneDataB"/>
-		<uint32 name="ofsBoneHieB"/>
+		<uint32 name="ofsBoneHieB" comment="Hie for Hierarchy"/>
 		<uint32 name="numMaterials"/>
 		<uint32 name="ofsMaterialsOfs"/>
 		<uint32 name="ofsMaterials"/>
 		<uint32 name="num_mesh" log='1'/>
-		<uint32 name="offset_mesh_offset_block" log='1'/>
-		<uint32 name="offset_mesh_block" log='1'/>
+		<uint32 name="offset_mesh_offset_block" log='1'
+				comment="each offset points to a mesh descriptor. This offset is relative to the base offset, namely 'offset_mesh_block'."/>
+		<uint32 name="offset_mesh_block" log='1' comment="base offset for mesh descriptors."/>
 		<uint32 name="unknownK"/>
 		<uint32 name="unknownL"/>
 		<uint32 name="ofsUnknownJ"/>

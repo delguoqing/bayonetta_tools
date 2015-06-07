@@ -30,6 +30,5 @@ class cls_obj(object):
 		if self.num_bone > 0:
 			cls_vertex_format = wmb_types.cls_vertex_format_vtw
 		else:
-			cls_vertex_format = wmb_types.cls_vertex_format_vt
-		
+			cls_vertex_format = wmb_types.cls_vertex_format_vtw
 		

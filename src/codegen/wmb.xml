@@ -106,15 +106,18 @@
 		<uint16 name="texIdxE"/>		
 	</type>
 	
-	<type typename="vertex_format_vt">
-		<float name="x"/>
-		<float name="y"/>
-		<float name="z"/>
-	</type>
-	
 	<type typename="vertex_format_vtw">
 		<float name="x"/>
 		<float name="y"/>
 		<float name="z"/>
-	</type>	
+		<float16 name="u"/>
+		<float16 name="v"/>
+		<uint16 name="unk0"/>
+		<uint16 name="unk1"/>
+		<uint16 name="unk2"/>
+		<uint16 name="unk3"/>
+		<list name="bone_indices"><uint8/></list>
+		<list name="bone_weights"><uint8/></list>
+	</type>
+	
 </format>

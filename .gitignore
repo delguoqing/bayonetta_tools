@@ -44,3 +44,4 @@ Temporary Items
 *.pyc
 
 g_*.py
+src/quick_tests/log.txt

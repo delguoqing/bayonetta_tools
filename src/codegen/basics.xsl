@@ -77,7 +77,7 @@
 <xsl:template match="list" mode="load_from_file">
 &sep;[&sep;
 	<xsl:apply-templates select="./*" mode="load_from_file"/>
-	&sep; for _ in xrange(<xsl:value-of select="@size"/>)&sep;
+	&sep; for _ in xrange(<xsl:if test="@is_var='1'">self.</xsl:if><xsl:value-of select="@size"/>)&sep;
 &sep;]</xsl:template>
 
 <xsl:template match="type" mode="load_from_file">

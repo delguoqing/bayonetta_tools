@@ -19,15 +19,3 @@ class cls_obj(object):
 		"""END FIELDS"""
 		self.batch_offset_block = None
 		self.batches = []
-		
-	def parse_batches(self, f):
-		offset = f.tell() + self.offset_batch_offset_block
-		f.seek(offset, 0)
-		self.batch_offset_block = wmb_types.cls_batch_offset_block(f, self.num_batch)
-		for i in xrange(self.num_batch):
-			batch_offset = offset + self.batch_offset_block.offset_list[i]
-			f.seek(batch_offset)
-			batch = wmb_types.cls_batch(f, self.offset_vertex_block, self.num_bone)
-			batch.parse_batch(f, )
-			self.batches.append(batch)
-	

@@ -22,17 +22,13 @@
 		<uint32 name="num_mesh" log='1'/>
 		<uint32 name="offset_mesh_offset_block" log='1'
 				comment="each offset points to a mesh descriptor. This offset is relative to the base offset, namely 'offset_mesh_block'."/>
-		<uint32 name="offset_mesh_block" log='1' comment="base offset for mesh descriptors."/>
+		<uint32 name="offset_mesh_block" log='1' comment="base offset for mesh descriptors block."/>
 		<uint32 name="unknownK"/>
 		<uint32 name="unknownL"/>
 		<uint32 name="ofsUnknownJ"/>
 		<uint32 name="ofsUnknownK"/>
 		<uint32 name="ofsUnknownL"/>
 		<list name="exMatInfo" size="4"><uint32/></list>
-			
-		<jump_to offset="offset_mesh_offset_block" is_var='1'/>
-		<type name="mesh_offset_block" typename="mesh_offset_block"
-			  comment="offsets relative to mesh block."/>
 	</type>
 	
 	<type typename="blk_material_offset">
@@ -75,8 +71,6 @@
 	</type>
 	
 	<type typename="batch" base_module='1' log='1'>
-		<require name="offset_vertex_block"/>
-		<require name="num_bone"/>
 		<uint32 name="id"/>
 		<uint16 name="unknownB"/>
 		<uint16 name="unknownC"/>
@@ -90,6 +84,8 @@
 		<uint32 name="num_index"/>
 		<uint32 name="offset_vertex" comment="relative to vertex block"/>
 		<list name="unknownI" size="7"><uint32/></list>
+		<uint32 name="num_bone"/>
+		<list name="bone_indices" size="num_bone" is_var='1'><uint32/></list>
 	</type>
 	
 	<type typename="material">
@@ -117,8 +113,8 @@
 		<uint16 name="unk1"/>
 		<uint16 name="unk2"/>
 		<uint16 name="unk3"/>
-		<list name="bone_indices"><uint8/></list>
-		<list name="bone_weights"><uint8/></list>
+		<list name="bone_indices" size='4'><uint8/></list>
+		<list name="bone_weights" size='4'><uint8/></list>
 	</type>
 	
 </format>

@@ -5,7 +5,6 @@ class cls_obj(object):
 		"""BEG FIELDS"""
 		self.FOURCC = None
 		self.exMatInfo = None
-		self.mesh_offset_block = None
 		self.numMaterials = None
 		self.numVerts = None
 		self.num_bone = None
@@ -32,21 +31,4 @@ class cls_obj(object):
 		self.unknownG = None
 		self.unknownK = None
 		self.unknownL = None
-		"""END FIELDS"""
-		self.meshes = None
-		
-	def post_parse(self, f):
-		self.parse_meshes(f)
-		
-	def parse_meshes(self, f):
-		self.meshes = []
-		for i in xrange(self.num_mesh):
-			offset = self.offset_mesh_block + self.mesh_offset_block.offset_list[i]
-			f.seek(offset, 0)
-			print "mesh offset 0x%x" % offset 
-			mesh = wmb_types.cls_mesh(f, self.offset_vertex_block, self.num_bone)
-			
-			f.seek(offset, 0)
-			mesh.parse_batches(f)
-			self.meshes.append(mesh)
-	
+		"""END FIELDS"""	

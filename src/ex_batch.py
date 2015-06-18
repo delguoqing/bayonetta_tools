@@ -7,12 +7,12 @@ class cls_obj(object):
 	
 	def __init__(self):
 		"""BEG FIELDS"""
+		self.bone_indices = None
 		self.id = None
 		self.num_bone = None
 		self.num_index = None
 		self.offset_index = None
 		self.offset_vertex = None
-		self.offset_vertex_block = None
 		self.primType = None
 		self.texID = None
 		self.unknownB = None
@@ -22,13 +22,4 @@ class cls_obj(object):
 		self.unknownI = None
 		self.vertEnd = None
 		self.vertStart = None
-		"""END FIELDS"""
-	
-	def parse_batch(self, f):
-		base_offset = self.offset_vertex_block + self.offset_vertex
-		print "batch vertices offset = 0x%x" % base_offset
-		if self.num_bone > 0:
-			cls_vertex_format = wmb_types.cls_vertex_format_vtw
-		else:
-			cls_vertex_format = wmb_types.cls_vertex_format_vtw
-		
+		"""END FIELDS"""		

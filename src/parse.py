@@ -29,9 +29,10 @@ def parse(f):
 		mesh.batches = batches
 		for batch_offset in batch_offset_block.offset_list:
 			batch_offset += offset
-			print "\tBATCH @0x%x" % batch_offset
 			f.seek(batch_offset, 0)
 			batch = cls_batch(f)
+			print "\tBATCH @0x%x, vertBeg@0x%x, vertEnd@0x%x" % (batch_offset, batch.vertStart,
+																 batch.vertEnd)
 			batches.append(batch)
 			
 	

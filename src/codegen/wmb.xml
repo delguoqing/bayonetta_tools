@@ -77,10 +77,10 @@
 		<uint8 name="texID"/>
 		<uint8 name="unknownDB"/>
 		<uint16 name="unknownE"/>
-		<uint32 name="vertStart"/>
-		<uint32 name="vertEnd"/>
+		<uint32 name="vertStart" comment="start vertex index"/>
+		<uint32 name="vertEnd" comment="end vertex index"/>
 		<uint32 name="primType" log='1'/>
-		<uint32 name="offset_index"/>
+		<uint32 name="offset_index" comment="relative to batch offset"/>
 		<uint32 name="num_index"/>
 		<uint32 name="offset_vertex" comment="relative to vertex block"/>
 		<list name="unknownI" size="7"><uint32/></list>

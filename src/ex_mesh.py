@@ -22,7 +22,8 @@ class cls_obj(object):
 		
 	def dump_obj(self, f):
 		lod = 0
-		lines = []
+		lines = ["s 1", "o %s" % self.name]
+		
 		start = 1
 		for batch in self.batches:
 			if batch.lod != lod:
@@ -37,7 +38,7 @@ class cls_obj(object):
 						idxs[j] -= batch.vertStart - start
 					lines.append("f %d %d %d" % tuple(idxs))
 			elif batch.primType == batch.PRIM_TRIANGLE_STRIP:
-				order = 0
+				order = 1
 				for i in xrange(2, batch.num_index):
 					idxs = batch.indices[i - 2: i + 1]
 					if order == 1:

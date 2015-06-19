@@ -33,9 +33,9 @@ def parse(f):
 			batch_offset += offset
 			f.seek(batch_offset, 0)
 			batch = cls_batch(f)
-			#print "\tBATCH @0x%x, vertBeg@0x%x, vertEnd@0x%x, vertNum@%d, indicesNum@%d" % \
-			#	(batch_offset, batch.vertStart, batch.vertEnd, batch.vertEnd - batch.vertStart,
-			#	 batch.num_index)
+			print "\tBATCH @0x%x, vertBeg@0x%x, vertEnd@0x%x, vertNum@%d, indicesNum@%d, lod@%d" % \
+				(batch_offset, batch.vertStart, batch.vertEnd, batch.vertEnd - batch.vertStart,
+				 batch.num_index, batch.lod)
 			batches.append(batch)
 			
 			vertices = []
@@ -59,12 +59,22 @@ def parse(f):
 			# print triangle faces
 			########################
 			#batch.print_faces()
-			
-			fout = open("mesh%d_%d.obj" % (mesh.id, batch_idx), "w")
-			batch.dump_obj(fout)
-			fout.close()
-			
-			batch_idx += 1
+
+			########################
+			# dump lod batch to obj file
+			########################			
+			#if batch.lod == 0:
+			#	fout = open("mesh%d_%d.obj" % (mesh.id, batch_idx), "w")
+			#	batch.dump_obj(fout)
+			#	fout.close()
+			#	batch_idx += 1
+
+		#######################
+		# dump lod0 mesh to obj file
+		########################
+		fout = open("mesh%d.obj" % mesh.id, "w")
+		mesh.dump_obj(fout)
+		fout.close()
 			
 if __name__ == '__main__':
 	description = "Parse a wmb file from Bayonetta."	

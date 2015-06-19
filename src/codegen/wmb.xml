@@ -70,14 +70,14 @@
 		<list name="mat" size="12" log='1'><float/></list>
 	</type>
 	
-	<type typename="batch" base_module='1' log='1'>
+	<type typename="batch" base_module='1' log='0'>
 		<uint32 name="id" log='1'/>
 		<uint16 name="unknownB" log='1'/>
 		<uint16 name="unknownC" log='1'/>
 		<uint8 name="texID"/>
 		<uint8 name="unknownDB" log='1'/>
 		<uint8 name="unknownE" log='1'/>
-		<uint8 name="lod" log='1'/>
+		<int8 name="lod" log='1'/>
 		<uint32 name="vertStart" comment="start vertex index"/>
 		<uint32 name="vertEnd" comment="end vertex index"/>
 		<uint32 name="primType" log='1'/>

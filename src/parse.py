@@ -28,13 +28,14 @@ def parse(f):
 		
 		batches = []
 		mesh.batches = batches
+		batch_idx = 0
 		for batch_offset in batch_offset_block.offset_list:
 			batch_offset += offset
 			f.seek(batch_offset, 0)
 			batch = cls_batch(f)
-			print "\tBATCH @0x%x, vertBeg@0x%x, vertEnd@0x%x, vertNum@%d, indicesNum@%d" % \
-				(batch_offset, batch.vertStart, batch.vertEnd, batch.vertEnd - batch.vertStart,
-				 batch.num_index)
+			#print "\tBATCH @0x%x, vertBeg@0x%x, vertEnd@0x%x, vertNum@%d, indicesNum@%d" % \
+			#	(batch_offset, batch.vertStart, batch.vertEnd, batch.vertEnd - batch.vertStart,
+			#	 batch.num_index)
 			batches.append(batch)
 			
 			vertices = []
@@ -44,29 +45,26 @@ def parse(f):
 				vertex_offset = wmb.offset_vertex_block + v_idx * stride
 				f.seek(vertex_offset, 0)
 				vf = cls_vertex_format_vtw(f)
-				vertices.append(vertices)
-				print "\t\t(%.2f, %.2f, %.2f)" % (vf.x, vf.y, vf.z)
+				vertices.append(vf)
+				#print "\t\t(%.2f, %.2f, %.2f)" % (vf.x, vf.y, vf.z)
 	
 			indices = []
 			batch.indices = indices
 			indices_offset = batch_offset + batch.offset_index
 			f.seek(indices_offset, 0)
 			for i in xrange(batch.num_index):
-				indices.append(struct.unpack(">H", f.read(2))[0] - batch.vertStart)
-			if batch.primType == 4:	# Triangle
-				assert batch.num_index % 3 == 0, "triangle should have a index num of multiple of 3."
-				for i in xrange(batch.num_index // 3):
-					print indices[i * 3], indices[i * 3 + 1], indices[i * 3 + 2],
-			else:
-				assert batch.primType == 5, "should be 4 or 5!"
-				order = 0
-				# Triangle Strip
-				for i in xrange(2, batch.num_index):
-					if order == 0:
-						print "\t\t", indices[i - 2], indices[i - 1], indices[i]
-					else:
-						print "\t\t", indices[i], indices[i - 1], indices[i - 2]
-					order = 1 - order
+				indices.append(struct.unpack(">H", f.read(2))[0])
+
+			########################
+			# print triangle faces
+			########################
+			#batch.print_faces()
+			
+			fout = open("mesh%d_%d.obj" % (mesh.id, batch_idx), "w")
+			batch.dump_obj(fout)
+			fout.close()
+			
+			batch_idx += 1
 			
 if __name__ == '__main__':
 	description = "Parse a wmb file from Bayonetta."	

@@ -71,21 +71,22 @@
 	</type>
 	
 	<type typename="batch" base_module='1' log='1'>
-		<uint32 name="id"/>
-		<uint16 name="unknownB"/>
-		<uint16 name="unknownC"/>
+		<uint32 name="id" log='1'/>
+		<uint16 name="unknownB" log='1'/>
+		<uint16 name="unknownC" log='1'/>
 		<uint8 name="texID"/>
-		<uint8 name="unknownDB"/>
-		<uint16 name="unknownE"/>
+		<uint8 name="unknownDB" log='1'/>
+		<uint8 name="unknownE" log='1'/>
+		<uint8 name="lod" log='1'/>
 		<uint32 name="vertStart" comment="start vertex index"/>
 		<uint32 name="vertEnd" comment="end vertex index"/>
 		<uint32 name="primType" log='1'/>
 		<uint32 name="offset_index" comment="relative to batch offset"/>
 		<uint32 name="num_index"/>
 		<uint32 name="offset_vertex" comment="relative to vertex block"/>
-		<list name="unknownI" size="7"><uint32/></list>
-		<uint32 name="num_bone"/>
-		<list name="bone_indices" size="num_bone" is_var='1'><uint32/></list>
+		<list name="unknownI" size="7" log='1'><uint32/></list>
+		<uint32 name="num_bone" log='1'/>
+		<list name="bone_indices" size="num_bone" is_var='1' log='1'><uint32/></list>
 	</type>
 	
 	<type typename="material">

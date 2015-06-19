@@ -1,5 +1,5 @@
 <format name="wmb" ver="xb" endian="BE">
-	<type typename="wmb" base_module='1' log='1'>
+	<type typename="wmb" base_module='1' log='0'>
 		<string name="FOURCC" size="4" assert_value="1" value="\0BMW"/>
 		<uint32 name="unknownA"/>
 		<uint16 name="unknownB"/>
@@ -54,13 +54,13 @@
 	<type typename="blk_vertex">
 	</type>
 	
-	<type typename="mesh" log='0' base_module='1'>
+	<type typename="mesh" log='1' base_module='1'>
 		<require name="offset_vertex_block"/>
 		<require name="num_bone"/>
-		<uint16 name="id" log='1'/>
-		<uint16 name="num_batch" log='1'/>
+		<uint16 name="id" log='0'/>
+		<uint16 name="num_batch" log='0'/>
 		<uint32 name="unknownB" log='1'/>
-		<uint32 name="offset_batch_offset_block" log='1'/>
+		<uint32 name="offset_batch_offset_block" log='0'/>
 		<uint32 name="unknwonD" log='1'/>
 		<uint32 name="unknownE" log='1'/>
 		<uint32 name="unknownF" log='1'/>
@@ -70,23 +70,23 @@
 		<list name="mat" size="12" log='1'><float/></list>
 	</type>
 	
-	<type typename="batch" base_module='1' log='0'>
-		<uint32 name="id" log='1'/>
-		<uint16 name="unknownB" log='1'/>
-		<uint16 name="unknownC" log='1'/>
+	<type typename="batch" base_module='1' log='1'>
+		<uint32 name="id" log='0'/>
+		<uint16 name="unknownB" log='0'/>
+		<uint16 name="unknownC" log='0'/>
 		<uint8 name="texID"/>
-		<uint8 name="unknownDB" log='1'/>
-		<uint8 name="unknownE" log='1'/>
-		<int8 name="lod" log='1'/>
+		<uint8 name="unknownDB" log='0'/>
+		<uint8 name="unknownE" log='0'/>
+		<int8 name="lod" log='0'/>
 		<uint32 name="vertStart" comment="start vertex index"/>
 		<uint32 name="vertEnd" comment="end vertex index"/>
 		<uint32 name="primType" log='1'/>
 		<uint32 name="offset_index" comment="relative to batch offset"/>
 		<uint32 name="num_index"/>
 		<uint32 name="offset_vertex" comment="relative to vertex block"/>
-		<list name="unknownI" size="7" log='1'><uint32/></list>
-		<uint32 name="num_bone" log='1'/>
-		<list name="bone_indices" size="num_bone" is_var='1' log='1'><uint32/></list>
+		<list name="unknownI" size="7" log='0'><uint32/></list>
+		<uint32 name="num_bone" log='0'/>
+		<list name="bone_indices" size="num_bone" is_var='1' log='0'><uint32/></list>
 	</type>
 	
 	<type typename="material">

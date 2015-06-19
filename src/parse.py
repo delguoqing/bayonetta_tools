@@ -17,9 +17,9 @@ def parse(f):
 	base_offset = wmb.offset_mesh_block
 	for offset in mesh_offset_block.offset_list:
 		offset += base_offset
-		print "MESH @0x%x" % offset
 		f.seek(offset, 0)
 		mesh = cls_mesh(f, wmb.offset_vertex_block, wmb.num_bone)
+		print "MESH %d @0x%x" % (mesh.id, offset)
 		meshes.append(mesh)
 		
 		offset += mesh.offset_batch_offset_block
@@ -72,7 +72,7 @@ def parse(f):
 		#######################
 		# dump lod0 mesh to obj file
 		########################
-		fout = open("mesh%d.obj" % mesh.id, "w")
+		fout = open("mesh%d%s.obj" % (mesh.id, mesh.name), "w")
 		mesh.dump_obj(fout)
 		fout.close()
 			

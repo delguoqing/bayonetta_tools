@@ -17,13 +17,13 @@ class cls_obj(object):
 		self.offset_vertex = None
 		self.primType = None
 		self.texID = None
-		self.unknownB = None
 		self.unknownC = None
 		self.unknownDB = None
 		self.unknownE = None
 		self.unknownI = None
 		self.vertEnd = None
 		self.vertStart = None
+		self.vertex_format = None
 		"""END FIELDS"""
 		self.vertices = []
 		self.indices = []
@@ -71,3 +71,9 @@ class cls_obj(object):
 		else:
 			assert False, "unsupported primtive type! primType=%d" % self.primType
 		f.write("\n".join(lines))
+		
+	def get_vf_class(self):
+		if self.vertex_format & 0x1:
+			return wmb_types.cls_vertex_format_vtw
+		else:
+			return wmb_types.cls_vertex_format_vt

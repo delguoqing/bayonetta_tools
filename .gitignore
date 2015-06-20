@@ -47,3 +47,5 @@ g_*.py
 src/quick_tests/log.txt
 src/log.txt
 *.obj
+src/log1.txt
+src/log2.txt

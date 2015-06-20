@@ -1,5 +1,5 @@
 <format name="wmb" ver="xb" endian="BE">
-	<type typename="wmb" base_module='1' log='0'>
+	<type typename="wmb" base_module='1' log='1'>
 		<string name="FOURCC" size="4" assert_value="1" value="\0BMW"/>
 		<uint32 name="unknownA"/>
 		<uint16 name="unknownB"/>
@@ -9,7 +9,7 @@
 		<uint16 name="unknownE"/>
 		<uint32 name="unknownF"/>
 		<uint32 name="offset_vertex_block" log='1'/>
-		<uint32 name="ofsVertExData"/>
+		<uint32 name="ofsVertExData" log='1'/>
 		<list name="unknownG" size="4"><uint32/></list>
 		<uint32 name="num_bone" log='1'/>
 		<uint32 name="ofsBoneHie" comment="Hie for Hierarchy"/>
@@ -70,23 +70,23 @@
 		<list name="mat" size="12" log='1'><float/></list>
 	</type>
 	
-	<type typename="batch" base_module='1' log='0'>
+	<type typename="batch" base_module='1' log='1'>
 		<uint32 name="id" log='0'/>
-		<uint16 name="unknownB" log='0'/>
-		<uint16 name="unknownC" log='0'/>
+		<uint16 name="vertex_format" log='1'  comment="bitflag.40960=vt, 40961=vtw"/>
+		<uint16 name="unknownC" log='1'/>
 		<uint8 name="texID"/>
-		<uint8 name="unknownDB" log='0'/>
-		<uint8 name="unknownE" log='0'/>
-		<int8 name="lod" log='0'/>
+		<uint8 name="unknownDB" log='1'/>
+		<uint8 name="unknownE" log='1'/>
+		<int8 name="lod" log='1'/>
 		<uint32 name="vertStart" comment="start vertex index"/>
 		<uint32 name="vertEnd" comment="end vertex index"/>
 		<uint32 name="primType" log='1'/>
 		<uint32 name="offset_index" comment="relative to batch offset"/>
 		<uint32 name="num_index"/>
-		<uint32 name="offset_vertex" comment="relative to vertex block"/>
-		<list name="unknownI" size="7" log='0'><uint32/></list>
-		<int32 name="num_bone" log='0'/>
-		<list name="bone_indices" size="num_bone" is_var='1' log='0'><uint8/></list>
+		<uint32 name="offset_vertex" comment="relative to vertex block" log='1'/>
+		<list name="unknownI" size="28" log='1'><int8/></list>
+		<int32 name="num_bone" log='1' stat='0'/>
+		<list name="bone_indices" size="num_bone" is_var='1' log='1'><uint8/></list>
 	</type>
 	
 	<type typename="material">
@@ -116,6 +116,14 @@
 		<uint16 name="unk3"/>
 		<list name="bone_indices" size='4'><uint8/></list>
 		<list name="bone_weights" size='4'><uint8/></list>
+	</type>
+
+	<type typename="vertex_format_vt">
+		<float name="x"/>
+		<float name="y"/>
+		<float name="z"/>
+		<float16 name="u"/>
+		<float16 name="v"/>
 	</type>
 	
 </format>

@@ -7,6 +7,11 @@ from util import iter_path, \
 def iter_all_wmb():
 	return glob.glob(r"..\..\..\bayonetta\*\*\*\*.wmb")
 
+def get_iter_one_pack_wmb(i):
+	def iter_one_pack_wmb():
+		return glob.glob(r"..\..\..\bayonetta\data%02d_files\*\*\*.wmb" % i)
+	return iter_one_pack_wmb
+
 def make_common_test(wmb_files, dump_obj=False):
 	def test_common():
 		import gen_all
@@ -34,6 +39,12 @@ test_bm0020 = make_common_test(r"..\..\..\bayonetta\data01_files\bm\bm0020\bm002
 							   dump_obj=False)
 test_em001f = make_common_test(r"..\..\..\bayonetta\data01_files\em\em001f\em001f.wmb",
 							   dump_obj=False)
+test_data01 = make_common_test(get_iter_one_pack_wmb(1))
+test_data02 = make_common_test(get_iter_one_pack_wmb(2))
+test_data03 = make_common_test(get_iter_one_pack_wmb(3))
+test_data11 = make_common_test(get_iter_one_pack_wmb(11))
+test_data12 = make_common_test(get_iter_one_pack_wmb(12))
+test_data13 = make_common_test(get_iter_one_pack_wmb(13))
 
 ACTIVE_TEST = test_em001f
 

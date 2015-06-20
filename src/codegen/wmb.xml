@@ -85,8 +85,8 @@
 		<uint32 name="num_index"/>
 		<uint32 name="offset_vertex" comment="relative to vertex block"/>
 		<list name="unknownI" size="7" log='0'><uint32/></list>
-		<uint32 name="num_bone" log='0'/>
-		<list name="bone_indices" size="num_bone" is_var='1' log='0'><uint32/></list>
+		<int32 name="num_bone" log='0'/>
+		<list name="bone_indices" size="num_bone" is_var='1' log='0'><uint8/></list>
 	</type>
 	
 	<type typename="material">

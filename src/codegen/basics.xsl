@@ -40,7 +40,7 @@
 &sep;;assert self.<xsl:value-of select="@name"/> == <xsl:apply-templates select="." mode="value"/>,&sep;
 &sep;"value assert fail for '<xsl:value-of select="@name"/>': expect <xsl:apply-templates select="." mode="value"/>, get %r" % self.<xsl:value-of select="@name"/>
 	</xsl:if>
-	<xsl:if test="@value_statistic='1'">
+	<xsl:if test="@stat='1'">
 &sep;;add_value_statistic("<xsl:value-of select="@name"/>", self.<xsl:value-of select="@name"/>)&sep;
 	</xsl:if>	
 </xsl:template>

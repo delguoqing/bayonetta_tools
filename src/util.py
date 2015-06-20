@@ -306,4 +306,12 @@ def iter_path(path):
 	else:
 		for _path in path:
 			yield path
-		
+
+def beep_error():
+	import winsound
+	Freq = 750 # Set Frequency To 750 Hertz
+	Dur = 300 # Set Duration To 300 ms == 0.3 second
+	winsound.Beep(Freq,Dur)
+
+def beep_finish():
+	print "\a"

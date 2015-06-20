@@ -4,7 +4,7 @@ import struct
 from wmb_types import cls_mesh_offset_block, cls_batch_offset_block
 from wmb_types import cls_wmb, cls_mesh, cls_batch, cls_vertex_format_vtw
 
-def parse(f):
+def parse(f, dump_obj):
 	wmb = cls_wmb(f)
 	
 	# mesh offset block
@@ -21,6 +21,7 @@ def parse(f):
 		mesh = cls_mesh(f, wmb.offset_vertex_block, wmb.num_bone)
 		print "MESH %d @0x%x" % (mesh.id, offset)
 		meshes.append(mesh)
+		print " , name:%s" % mesh.name
 		
 		offset += mesh.offset_batch_offset_block
 		f.seek(offset, 0)
@@ -32,9 +33,10 @@ def parse(f):
 		for batch_offset in batch_offset_block.offset_list:
 			batch_offset += offset
 			f.seek(batch_offset, 0)
+			print ("\tBATCH @0x%x" % batch_offset),
 			batch = cls_batch(f)
-			print "\tBATCH @0x%x, vertBeg@0x%x, vertEnd@0x%x, vertNum@%d, indicesNum@%d, lod@%d" % \
-				(batch_offset, batch.vertStart, batch.vertEnd, batch.vertEnd - batch.vertStart,
+			print " ,vertBeg@0x%x, vertEnd@0x%x, vertNum@%d, indicesNum@%d, lod@%d" % \
+				(batch.vertStart, batch.vertEnd, batch.vertEnd - batch.vertStart,
 				 batch.num_index, batch.lod)
 			batches.append(batch)
 			
@@ -62,7 +64,7 @@ def parse(f):
 
 			########################
 			# dump lod batch to obj file
-			########################			
+			########################
 			#if batch.lod == 0:
 			#	fout = open("mesh%d_%d.obj" % (mesh.id, batch_idx), "w")
 			#	batch.dump_obj(fout)
@@ -72,14 +74,16 @@ def parse(f):
 		#######################
 		# dump lod0 mesh to obj file
 		########################
-		fout = open("mesh%d%s.obj" % (mesh.id, mesh.name), "w")
-		mesh.dump_obj(fout)
-		fout.close()
-			
+		if dump_obj:
+			fout = open("mesh%d%s.obj" % (mesh.id, mesh.name), "w")
+			mesh.dump_obj(fout)
+			fout.close()
+	
 if __name__ == '__main__':
 	description = "Parse a wmb file from Bayonetta."	
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument("--wmb", action="store", dest="wmb_file", type=argparse.FileType("rb"), help="Input file, the Bayonetta wmb file.")
+	parser.add_argument("--d", action="store_true", dest="dump_obj", type=bool, default=False, help="if need dump *.obj file.")
 	args = parser.parse_args()
 	
-	parse(args.wmb_file)
+	parse(args.wmb_file, args.dump_obj)

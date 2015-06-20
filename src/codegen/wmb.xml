@@ -54,23 +54,23 @@
 	<type typename="blk_vertex">
 	</type>
 	
-	<type typename="mesh" log='1' base_module='1'>
+	<type typename="mesh" log='0' base_module='1'>
 		<require name="offset_vertex_block"/>
 		<require name="num_bone"/>
 		<uint16 name="id" log='0'/>
 		<uint16 name="num_batch" log='0'/>
-		<uint32 name="unknownB" log='1'/>
+		<uint32 name="unknownB" log='0'/>
 		<uint32 name="offset_batch_offset_block" log='0'/>
-		<uint32 name="unknwonD" log='1'/>
-		<uint32 name="unknownE" log='1'/>
-		<uint32 name="unknownF" log='1'/>
-		<uint32 name="unknownG" log='1'/>
-		<uint32 name="unknownH" log='1'/>
+		<uint32 name="unknwonD" log='0'/>
+		<uint32 name="unknownE" log='0'/>
+		<uint32 name="unknownF" log='0'/>
+		<uint32 name="unknownG" log='0'/>
+		<uint32 name="unknownH" log='0'/>
 		<string name="name" size="32" log='1'/>
 		<list name="mat" size="12" log='1'><float/></list>
 	</type>
 	
-	<type typename="batch" base_module='1' log='1'>
+	<type typename="batch" base_module='1' log='0'>
 		<uint32 name="id" log='0'/>
 		<uint16 name="unknownB" log='0'/>
 		<uint16 name="unknownC" log='0'/>

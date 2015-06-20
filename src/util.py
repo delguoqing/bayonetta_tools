@@ -296,3 +296,14 @@ def load_simple_config(f):
 	for k, v in eval(config.read()).iteritems():
 		setattr(obj, k, v)
 	return obj
+
+def iter_path(path):
+	if isinstance(path, basestring):
+		yield path
+	elif callable(path):
+		for _path in path():
+			yield _path
+	else:
+		for _path in path:
+			yield path
+		

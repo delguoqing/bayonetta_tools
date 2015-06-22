@@ -1,5 +1,5 @@
 <format name="wmb" ver="xb" endian="BE">
-	<type typename="wmb" base_module='1' log='1'>
+	<type typename="wmb" base_module='1' log='0'>
 		<string name="FOURCC" size="4" assert_value="1" value="\0BMW"/>
 		<uint32 name="unknownA"/>
 		<uint16 name="unknownB"/>
@@ -12,9 +12,9 @@
 		<uint32 name="ofsVertExData" log='1'/>
 		<list name="unknownG" size="4"><uint32/></list>
 		<uint32 name="num_bone" log='1'/>
-		<uint32 name="ofsBoneHie" comment="Hie for Hierarchy"/>
-		<uint32 name="ofsBoneDataA"/>
-		<uint32 name="ofsBoneDataB"/>
+		<uint32 name="offset_bone_hierarchy"/>
+		<uint32 name="offset_bone_rel_offset_pos" comment="relative offset pos."/>
+		<uint32 name="offset_bone_offset_pos" comment="absolute offset pos."/>
 		<uint32 name="ofsBoneHieB" comment="Hie for Hierarchy"/>
 		<uint32 name="numMaterials"/>
 		<uint32 name="ofsMaterialsOfs"/>
@@ -29,6 +29,12 @@
 		<uint32 name="ofsUnknownK"/>
 		<uint32 name="ofsUnknownL"/>
 		<list name="exMatInfo" size="4"><uint32/></list>
+	</type>
+	
+	<type typename="vec3">
+		<float name="x"/>
+		<float name="y"/>
+		<float name="z"/>
 	</type>
 	
 	<type typename="blk_material_offset">
@@ -51,9 +57,6 @@
 		<list name="id_list" size="material_id_num" is_var='1'><uint32/></list>
 	</type>
 	
-	<type typename="blk_vertex">
-	</type>
-	
 	<type typename="mesh" log='0' base_module='1'>
 		<require name="offset_vertex_block"/>
 		<require name="num_bone"/>
@@ -70,7 +73,7 @@
 		<list name="mat" size="12" log='1'><float/></list>
 	</type>
 	
-	<type typename="batch" base_module='1' log='1'>
+	<type typename="batch" base_module='1' log='0'>
 		<uint32 name="id" log='0'/>
 		<uint16 name="vertex_format" log='1'  comment="bitflag.40960=vt, 40961=vtw"/>
 		<uint16 name="unknownC" log='1'/>
@@ -124,6 +127,16 @@
 		<float name="z"/>
 		<float16 name="u"/>
 		<float16 name="v"/>
+	</type>
+
+	<type typename="bone_hierarchy" base_module='1'>
+		<require name="num_bone"/>
+		<list name="parent_list" size="num_bone" is_var='1'><int16/></list>
+	</type>
+	
+	<type typename="bone_offset_pos">
+		<require name="num_bone"/>
+		<list name="pos_list" size="num_bone" is_var="1"><type typename="vec3"/></list>
 	</type>
 	
 </format>

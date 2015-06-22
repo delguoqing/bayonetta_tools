@@ -73,7 +73,17 @@ class cls_obj(object):
 		f.write("\n".join(lines))
 		
 	def get_vf_class(self):
-		if self.vertex_format & 0x1:
-			return wmb_types.cls_vertex_format_vtw
-		else:
-			return wmb_types.cls_vertex_format_vt
+		return wmb_types.cls_vertex_format_vtw	
+		#if self.vertex_format & 0x1:
+		#	return wmb_types.cls_vertex_format_vtw
+		#else:
+		#	return wmb_types.cls_vertex_format_vt
+		
+	# make sure that bone indices are valid
+	def check_bone_indices(self, num_bone):
+		assert self.num_bone <= num_bone, "num_bone of a batch should not be larger than" \
+										  " global num_bone %d/%d" % (self.num_bone, num_bone)
+		for bone_index in self.bone_indices:
+			assert 0 <= bone_index < num_bone, "invalid bone index %d/%d" \
+												% (bone_index, num_bone)
+		

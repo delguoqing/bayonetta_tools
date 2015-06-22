@@ -1,16 +1,35 @@
 # -*- coding: utf8
 import argparse
 import struct
+import wmb_types
 from wmb_types import cls_mesh_offset_block, cls_batch_offset_block
 from wmb_types import cls_wmb, cls_mesh, cls_batch, cls_vertex_format_vtw
 
 def parse(f, dump_obj):
 	wmb = cls_wmb(f)
 	print ("BoneNum = %d" % wmb.num_bone)
+	print ("offset_bone_hierarchy = 0x%x, ofsBoneHieB = 0x%x, ofsMaterialsOfs = 0x%x, ofsMaterials = 0x%x" \
+		   % (wmb.offset_bone_hierarchy, wmb.ofsBoneHieB, wmb.ofsMaterialsOfs, wmb.ofsMaterials))
+	
 	# mesh offset block
 	f.seek(wmb.offset_mesh_offset_block, 0)
 	mesh_offset_block = cls_mesh_offset_block(f, wmb.num_mesh)
 	
+	# bone hierarchy
+	f.seek(wmb.offset_bone_hierarchy, 0)
+	bone_hierarchy = wmb_types.cls_bone_hierarchy(f, wmb.num_bone)
+	bone_hierarchy.check()
+	
+	# bone relative offset pos
+	#print "bone offset: relative pos"
+	f.seek(wmb.offset_bone_rel_offset_pos, 0)
+	bone_rel_offset_pos = wmb_types.cls_bone_offset_pos(f, wmb.num_bone)
+
+	# bone offset pos
+	#print "bone offset: pos"
+	f.seek(wmb.offset_bone_offset_pos, 0)
+	bone_offset_pos = wmb_types.cls_bone_offset_pos(f, wmb.num_bone)
+		
 	# mesh block
 	meshes = []
 	wmb.meshes = meshes
@@ -51,6 +70,7 @@ def parse(f, dump_obj):
 				vf = vf_cls(f)
 				vertices.append(vf)
 				#print "\t\t(%.2f, %.2f, %.2f)" % (vf.x, vf.y, vf.z)
+				#print "\t\tindices:", vf.bone_indices, "weights:", vf.bone_weights
 	
 			indices = []
 			batch.indices = indices
@@ -59,6 +79,7 @@ def parse(f, dump_obj):
 			for i in xrange(batch.num_index):
 				indices.append(struct.unpack(">H", f.read(2))[0])
 
+			batch.check_bone_indices(wmb.num_bone)
 			########################
 			# print triangle faces
 			########################
@@ -80,7 +101,7 @@ def parse(f, dump_obj):
 			fout = open("mesh%d%s.obj" % (mesh.id, mesh.name), "w")
 			mesh.dump_obj(fout)
 			fout.close()
-	
+		
 if __name__ == '__main__':
 	description = "Parse a wmb file from Bayonetta."	
 	parser = argparse.ArgumentParser(description=description)

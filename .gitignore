@@ -49,3 +49,4 @@ src/log.txt
 *.obj
 src/log1.txt
 src/log2.txt
+src/io_mesh_wmb/parser/*

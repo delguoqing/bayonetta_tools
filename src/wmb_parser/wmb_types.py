@@ -1,1 +1,1 @@
-from g_wmb_parser_xb import *
+from .g_wmb_parser_xb import *

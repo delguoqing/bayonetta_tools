@@ -1,9 +1,12 @@
 # -*- coding: utf8
+from __future__ import print_function
 import argparse
 import struct
-import wmb_types
-from wmb_types import cls_mesh_offset_block, cls_batch_offset_block
-from wmb_types import cls_wmb, cls_mesh, cls_batch, cls_vertex_format_vtw
+from . import wmb_types
+from .wmb_types import (
+	cls_mesh_offset_block, cls_batch_offset_block,
+	cls_wmb, cls_mesh, cls_batch
+)
 
 def parse(f, dump_obj):
 	wmb = cls_wmb(f)
@@ -38,9 +41,9 @@ def parse(f, dump_obj):
 		offset += base_offset
 		f.seek(offset, 0)
 		mesh = cls_mesh(f, wmb.offset_vertex_block, wmb.num_bone)
-		print ("MESH %d @0x%x" % (mesh.id, offset)),
+		print ("MESH %d @0x%x" % (mesh.id, offset), end="")
 		meshes.append(mesh)
-		print ", name:%s" % mesh.name
+		print (", name:%s" % mesh.name)
 		
 		offset += mesh.offset_batch_offset_block
 		f.seek(offset, 0)
@@ -52,17 +55,18 @@ def parse(f, dump_obj):
 		for batch_offset in batch_offset_block.offset_list:
 			batch_offset += offset
 			f.seek(batch_offset, 0)
-			print ("\tBATCH @0x%x" % batch_offset),
+			print ("\tBATCH @0x%x" % batch_offset, end="")
 			batch = cls_batch(f)
-			print ",vertBeg@0x%x, vertNum@%d, indicesNum@%d, lod@%d, nBone=%d, indiceOfs=0x%x, primType=%d" % \
+			print (",vertBeg@0x%x, vertNum@%d, indicesNum@%d, lod@%d, nBone=%d, indiceOfs=0x%x, primType=%d" % \
 				(batch.vertStart, batch.vertEnd - batch.vertStart,
 				 batch.num_index, batch.lod, batch.num_bone, batch_offset + batch.offset_index,
-				 batch.primType)
+				 batch.primType))
 			batches.append(batch)
 			
 			vertices = []
 			batch.vertices = vertices
-			vf_cls = batch.get_vf_class()
+			vf_cls_name = batch.get_vf_class()
+			vf_cls = getattr(wmb_types, "cls_%s" % vf_cls_name)
 			stride = vf_cls.get_unit_size()
 			for v_idx in xrange(batch.vertStart, batch.vertEnd):
 				vertex_offset = wmb.offset_vertex_block + v_idx * stride
@@ -101,12 +105,3 @@ def parse(f, dump_obj):
 			fout = open("mesh%d%s.obj" % (mesh.id, mesh.name), "w")
 			mesh.dump_obj(fout)
 			fout.close()
-		
-if __name__ == '__main__':
-	description = "Parse a wmb file from Bayonetta."	
-	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument("--wmb", action="store", dest="wmb_file", type=argparse.FileType("rb"), help="Input file, the Bayonetta wmb file.")
-	parser.add_argument("-d", action="store_true", dest="dump_obj", default=False, help="if need dump *.obj file.")
-	args = parser.parse_args()
-	
-	parse(args.wmb_file, args.dump_obj)

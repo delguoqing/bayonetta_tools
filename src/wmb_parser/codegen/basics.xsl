@@ -161,7 +161,7 @@
 <!-- import base class module -->
 <xsl:template name="import_base_module">
 <xsl:if test="@base_module='1'">
-&sep;import ex_<xsl:value-of select="@typename"/>&sep;
+&sep;from . import ex_<xsl:value-of select="@typename"/>&sep;
 </xsl:if>
 </xsl:template>
 

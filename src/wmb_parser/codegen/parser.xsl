@@ -57,7 +57,7 @@ class cls_<xsl:value-of select="@typename"/>(<xsl:call-template name="base"/>):
 		</xsl:apply-templates>
 		</xsl:for-each>
 		<xsl:if test="@log='1'">
-		if self.need_log(): print repr(self)&sep;
+		if self.need_log(): print (repr(self))&sep;
 		</xsl:if>
 		
 	@staticmethod
@@ -99,9 +99,9 @@ def add_value_statistic(k, v):
 	
 def print_value_statistic():
 	for k, v_set in value_statistic.iteritems():
-		print k, ":"
+		print (k, ":")
 		for v, v_count in v_set.iteritems():
-			print "\t", v, ":%d" % v_count
+			print ("\t", v, ":%d" % v_count)
 			
 if __name__ == "__main__":&sep;
 <xsl:for-each select="./type">

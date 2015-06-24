@@ -1,5 +1,3 @@
-import wmb_types
-
 class cls_obj(object):
 	def __init__(self):
 		"""BEG FIELDS"""

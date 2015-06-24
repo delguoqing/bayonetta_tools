@@ -3,6 +3,7 @@ import os
 import sys
 
 def import_wmb(filepath):
+	from .wmb_parser.parse import parse
 	f = open(filepath, "rb")
 	wmb = parse(f, False)
 	f.close()

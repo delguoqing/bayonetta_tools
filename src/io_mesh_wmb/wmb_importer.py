@@ -2,12 +2,9 @@
 import os
 import sys
 
-sys.path.append("parser")
-
 def import_wmb(filepath):
-	import parse
 	f = open(filepath, "rb")
-	wmb = parse.parse(f, False)
+	wmb = parse(f, False)
 	f.close()
 	
 #################################

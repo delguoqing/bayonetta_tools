@@ -12,8 +12,8 @@ from .wmb_types import (
 def parse(f, dump_obj):
 	wmb = cls_wmb(f)
 	print ("BoneNum = %d" % wmb.num_bone)
-	print ("offset_bone_hierarchy = 0x%x, ofsBoneHieB = 0x%x, ofsMaterialsOfs = 0x%x, ofsMaterials = 0x%x" \
-		   % (wmb.offset_bone_hierarchy, wmb.ofsBoneHieB, wmb.ofsMaterialsOfs, wmb.ofsMaterials))
+	#print ("offset_bone_hierarchy = 0x%x, ofsBoneHieB = 0x%x, ofsMaterialsOfs = 0x%x, ofsMaterials = 0x%x" \
+	#	   % (wmb.offset_bone_hierarchy, wmb.ofsBoneHieB, wmb.ofsMaterialsOfs, wmb.ofsMaterials))
 	
 	# mesh offset block
 	f.seek(wmb.offset_mesh_offset_block, 0)
@@ -23,6 +23,7 @@ def parse(f, dump_obj):
 	f.seek(wmb.offset_bone_hierarchy, 0)
 	bone_hierarchy = wmb_types.cls_bone_hierarchy(f, wmb.num_bone)
 	bone_hierarchy.check()
+	wmb.bone_hierarchy = bone_hierarchy
 	
 	# bone relative offset pos
 	#print "bone offset: relative pos"
@@ -33,6 +34,7 @@ def parse(f, dump_obj):
 	#print "bone offset: pos"
 	f.seek(wmb.offset_bone_offset_pos, 0)
 	bone_offset_pos = wmb_types.cls_bone_offset_pos(f, wmb.num_bone)
+	wmb.bone_offset_pos = bone_offset_pos
 		
 	# mesh block
 	meshes = []
@@ -42,9 +44,9 @@ def parse(f, dump_obj):
 		offset += base_offset
 		f.seek(offset, 0)
 		mesh = cls_mesh(f, wmb.offset_vertex_block, wmb.num_bone)
-		print ("MESH %d @0x%x" % (mesh.id, offset), end="")
+		#print ("MESH %d @0x%x" % (mesh.id, offset), end="")
 		meshes.append(mesh)
-		print (", name:%s" % mesh.name)
+		#print (", name:%s" % mesh.name)
 		
 		offset += mesh.offset_batch_offset_block
 		f.seek(offset, 0)
@@ -56,12 +58,12 @@ def parse(f, dump_obj):
 		for batch_offset in batch_offset_block.offset_list:
 			batch_offset += offset
 			f.seek(batch_offset, 0)
-			print ("\tBATCH @0x%x" % batch_offset, end="")
+			#print ("\tBATCH @0x%x" % batch_offset, end="")
 			batch = cls_batch(f)
-			print (",vertBeg@0x%x, vertNum@%d, indicesNum@%d, lod@%d, nBone=%d, indiceOfs=0x%x, primType=%d" % \
-				(batch.vertStart, batch.vertEnd - batch.vertStart,
-				 batch.num_index, batch.lod, batch.num_bone, batch_offset + batch.offset_index,
-				 batch.primType))
+			#print (",vertBeg@0x%x, vertNum@%d, indicesNum@%d, lod@%d, nBone=%d, indiceOfs=0x%x, primType=%d" % \
+			#	(batch.vertStart, batch.vertEnd - batch.vertStart,
+			#	 batch.num_index, batch.lod, batch.num_bone, batch_offset + batch.offset_index,
+			#	 batch.primType))
 			batches.append(batch)
 			
 			vertices = []

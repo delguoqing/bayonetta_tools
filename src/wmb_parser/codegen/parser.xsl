@@ -29,7 +29,12 @@
 # DO NOT MODIFY
 #
 import struct
-import numpy&sep;
+import numpy
+import sys
+import six
+from six import b
+if sys.version_info[0] == 3:
+	buffer = memoryview&sep;
 
 <xsl:for-each select="./*[@base_module]"><xsl:text>
 </xsl:text>

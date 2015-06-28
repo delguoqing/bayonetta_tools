@@ -2,6 +2,7 @@
 from __future__ import print_function
 import argparse
 import struct
+import six
 from . import wmb_types
 from .wmb_types import (
 	cls_mesh_offset_block, cls_batch_offset_block,
@@ -68,7 +69,7 @@ def parse(f, dump_obj):
 			vf_cls_name = batch.get_vf_class()
 			vf_cls = getattr(wmb_types, "cls_%s" % vf_cls_name)
 			stride = vf_cls.get_unit_size()
-			for v_idx in xrange(batch.vertStart, batch.vertEnd):
+			for v_idx in range(batch.vertStart, batch.vertEnd):
 				vertex_offset = wmb.offset_vertex_block + v_idx * stride
 				f.seek(vertex_offset, 0)
 				vf = vf_cls(f)
@@ -80,7 +81,7 @@ def parse(f, dump_obj):
 			batch.indices = indices
 			indices_offset = batch_offset + batch.offset_index
 			f.seek(indices_offset, 0)
-			for i in xrange(batch.num_index):
+			for i in range(batch.num_index):
 				indices.append(struct.unpack(">H", f.read(2))[0])
 
 			batch.check_bone_indices(wmb.num_bone)

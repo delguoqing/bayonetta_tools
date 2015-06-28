@@ -71,13 +71,13 @@
 </xsl:template>
 
 <xsl:template match="string" mode="load_from_file">
-	<xsl:call-template name="numeric_type"/>.rstrip("\x00")&sep;
+	<xsl:call-template name="numeric_type"/>.rstrip(b("\x00"))&sep;
 </xsl:template>
 
 <xsl:template match="list" mode="load_from_file">
 &sep;[&sep;
 	<xsl:apply-templates select="./*" mode="load_from_file"/>
-	&sep; for _ in xrange(<xsl:if test="@is_var='1'">self.</xsl:if><xsl:value-of select="@size"/>)&sep;
+	&sep; for _ in range(<xsl:if test="@is_var='1'">self.</xsl:if><xsl:value-of select="@size"/>)&sep;
 &sep;]</xsl:template>
 
 <xsl:template match="type" mode="load_from_file">
@@ -92,7 +92,7 @@
 
 <!-- value -->
 <xsl:template match="int8|uint8|int16|uint16|int32|uint32|float|float16|string|fixed16" mode="value"><xsl:value-of select="@value"/></xsl:template>
-<xsl:template match="string" mode="value">'<xsl:value-of select="@value"/>'</xsl:template>
+<xsl:template match="string" mode="value">b('<xsl:value-of select="@value"/>')</xsl:template>
 <xsl:template match="unicode" mode="value">u'<xsl:value-of select="@value"/>'</xsl:template>
 
 <!-- size -->

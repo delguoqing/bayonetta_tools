@@ -4,6 +4,7 @@ import sys
 import bmesh
 import bpy
 import six
+import mathutils
 
 def import_wmb(filepath):
 	from .wmb_parser.parse import parse
@@ -91,7 +92,7 @@ def import_mesh(wmb, hub_name):
 					bone_idx = batch.bone_indices[i]
 					group = obj.vertex_groups["Bone%d" % bone_idx]
 					group.add([v_idx], w, 'REPLACE')
-			
+			obj.hide_select = True
 	return hub_obj
 
 def import_armature(wmb, hub_name):
@@ -106,7 +107,6 @@ def import_armature(wmb, hub_name):
 	
 	armt = obj.data
 	armt.name = armature_name
-	armt.show_axes = True
 	
 	bpy.ops.object.mode_set(mode='EDIT')
 	parent_list = wmb.bone_hierarchy.parent_list
@@ -118,6 +118,7 @@ def import_armature(wmb, hub_name):
 		bone.head = (pos.x, pos.z, pos.y)
 		bone.tail = bone.head
 		bone.use_connect = False
+	is_leaf = [True] * wmb.num_bone
 	for bidx, pidx in enumerate(parent_list):
 		bone = armt.edit_bones[bidx]
 		if pidx == -1:
@@ -125,5 +126,14 @@ def import_armature(wmb, hub_name):
 		else:
 			bone.parent = armt.edit_bones[pidx]
 			bone.parent.tail = bone.head
+			is_leaf[pidx] = False
+	for bidx in range(wmb.num_bone):
+		if is_leaf[bidx]:
+			parent = armt.edit_bones[parent_list[bidx]]
+			d = parent.tail - parent.head
+			bone = armt.edit_bones[bidx]
+			bone.tail = bone.head + d * 0.6
+		print (bidx, bone.tail, bone.head)
+	print ("leaf bone count=", is_leaf.count(True))
 	bpy.ops.object.mode_set()
 	return obj

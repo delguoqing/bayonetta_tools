@@ -13,12 +13,19 @@ def import_wmb(filepath):
 
 	obj_name = os.path.splitext(os.path.split(filepath)[1])[0]
 	
-	is_ok = import_mesh(wmb, obj_name)
-	if not is_ok:
+	hub_obj = import_mesh(wmb, obj_name)
+	if hub_obj is None:
 		return {'CANCELED'}
-	is_ok = import_armature(wmb, obj_name)
-	if not is_ok:
+	armt_obj = import_armature(wmb, obj_name)
+	if armt_obj is None:
 		return {'CANCELED'}
+	
+	for obj in hub_obj.children:
+		mod = obj.modifiers.new("gen_armt", 'ARMATURE')
+		mod.object = armt_obj
+		mod.use_bone_envelopes = False
+		mod.use_vertex_groups = True
+	
 	return {'FINISHED'}
 	
 def import_mesh(wmb, hub_name):
@@ -55,7 +62,7 @@ def import_mesh(wmb, hub_name):
 					face = [ bm.verts[idx - batch.vertStart] for idx in idxs ]
 					bm.faces.new(face)
 			else:
-				return False
+				return None
 			if hasattr(bm.faces, "ensure_lookup_table"):
 				bm.faces.ensure_lookup_table()			
 			bm.faces.index_update()
@@ -75,7 +82,17 @@ def import_mesh(wmb, hub_name):
 			bpy.ops.mesh.flip_normals()
 			bpy.ops.object.mode_set()
 			obj.select = False
-	return True
+			# create vertex groups for skinning
+			for bone_idx in batch.bone_indices:
+				obj.vertex_groups.new("Bone%d" % bone_idx)
+			# assign vertex weights
+			for v_idx, vf in enumerate(batch.vertices):
+				for i, w in zip(vf.bone_indices, vf.bone_weights):
+					bone_idx = batch.bone_indices[i]
+					group = obj.vertex_groups["Bone%d" % bone_idx]
+					group.add([v_idx], w, 'REPLACE')
+			
+	return hub_obj
 
 def import_armature(wmb, hub_name):
 	armature_name = hub_name + "_armt"
@@ -109,4 +126,4 @@ def import_armature(wmb, hub_name):
 			bone.parent = armt.edit_bones[pidx]
 			bone.parent.tail = bone.head
 	bpy.ops.object.mode_set()
-	return True
+	return obj

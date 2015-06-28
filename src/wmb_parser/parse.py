@@ -106,3 +106,4 @@ def parse(f, dump_obj):
 			fout = open("mesh%d%s.obj" % (mesh.id, mesh.name), "w")
 			mesh.dump_obj(fout)
 			fout.close()
+	return wmb

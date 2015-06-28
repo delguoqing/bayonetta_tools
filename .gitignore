@@ -52,3 +52,4 @@ src/log2.txt
 src/io_mesh_wmb/parser/*
 src/io_mesh_wmb/wmb_parser/*
 *.txt
+ref/bayonetta.cpp

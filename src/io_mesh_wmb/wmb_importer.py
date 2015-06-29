@@ -26,6 +26,7 @@ def import_wmb(filepath):
 		mod.object = armt_obj
 		mod.use_bone_envelopes = False
 		mod.use_vertex_groups = True
+	armt_obj.parent = hub_obj
 	
 	return {'FINISHED'}
 	
@@ -45,12 +46,33 @@ def import_mesh(wmb, hub_name):
 			if hasattr(bm.verts, "ensure_lookup_table"):
 				bm.verts.ensure_lookup_table()
 			bm.verts.index_update()
+			
+			used_faces = set()
+			def NEW_FACE():
+				if idxs[0] == idxs[1] or idxs[0] == idxs[2] or idxs[1] == idxs[2]:
+					return
+				dup_face = tuple(sorted(idxs))
+				# in case Blender complains about face already exists
+				# in case we have duplicated face, we duplicate vertices
+				if dup_face in used_faces:
+					for idx in idxs:
+						co = bm.verts[idx].co
+						bm.verts.new((co.x, co.y, co.z))
+					if hasattr(bm.verts, "ensure_lookup_table"):
+						bm.verts.ensure_lookup_table()
+					bm.verts.index_update()
+					face = [ bm.verts[-3], bm.verts[-2], bm.verts[-1] ]
+					bm.faces.new(face)
+				else:
+					used_faces.add(dup_face)
+					face = [ bm.verts[idx - batch.vertStart] for idx in idxs ]
+					bm.faces.new(face)
+				
 			#	faces
 			if batch.primType == batch.PRIM_TRIANGLE:
 				for i in range(batch.num_index // 3):
 					idxs = batch.indices[i * 3: i * 3 + 3]
-					face = [ bm.verts[idx - batch.vertStart] for idx in idxs ]
-					bm.faces.new(face)
+					NEW_FACE()
 			elif batch.primType == batch.PRIM_TRIANGLE_STRIP:
 				order = 1
 				for i in range(2, batch.num_index):
@@ -58,10 +80,7 @@ def import_mesh(wmb, hub_name):
 					if order == 1:
 						idxs.reverse()
 					order = 1 - order
-					if idxs[0] == idxs[1] or idxs[0] == idxs[2] or idxs[1] == idxs[2]:
-						continue					
-					face = [ bm.verts[idx - batch.vertStart] for idx in idxs ]
-					bm.faces.new(face)
+					NEW_FACE()
 			else:
 				return None
 			if hasattr(bm.faces, "ensure_lookup_table"):
@@ -84,15 +103,24 @@ def import_mesh(wmb, hub_name):
 			bpy.ops.object.mode_set()
 			obj.select = False
 			# create vertex groups for skinning
-			for bone_idx in batch.bone_indices:
+			for bone_idx in range(wmb.num_bone):
 				obj.vertex_groups.new("Bone%d" % bone_idx)
 			# assign vertex weights
+			#print ("batch.bone_indices, ", batch.bone_indices)
 			for v_idx, vf in enumerate(batch.vertices):
 				for i, w in zip(vf.bone_indices, vf.bone_weights):
-					bone_idx = batch.bone_indices[i]
+					if w == 0:
+						continue
+					#print ("\tadd_weight, %d, %d" % (i, w))
+					# in some cases, the bone ref index seems to be invalid
+					if i >= len(batch.bone_indices):
+						#bone_idx = batch.unknownI[i]
+						print ("\tbone index out of bound %d/%d" % (i, batch.num_bone))
+						continue
+					else:
+						bone_idx = batch.bone_indices[i]
 					group = obj.vertex_groups["Bone%d" % bone_idx]
 					group.add([v_idx], w, 'REPLACE')
-			obj.hide_select = True
 	return hub_obj
 
 def import_armature(wmb, hub_name):
@@ -128,12 +156,19 @@ def import_armature(wmb, hub_name):
 			bone.parent.tail = bone.head
 			is_leaf[pidx] = False
 	for bidx in range(wmb.num_bone):
+		bone = armt.edit_bones[bidx]
 		if is_leaf[bidx]:
 			parent = armt.edit_bones[parent_list[bidx]]
 			d = parent.tail - parent.head
-			bone = armt.edit_bones[bidx]
-			bone.tail = bone.head + d * 0.6
-		print (bidx, bone.tail, bone.head)
-	print ("leaf bone count=", is_leaf.count(True))
+			d.normalize()
+			bone.tail = bone.head + d * 0.1
+	for bidx in range(wmb.num_bone):
+		bone = armt.edit_bones[bidx]
+		if bone.head == bone.tail:
+			bone.tail += mathutils.Vector((0.0, -0.1, 0.0))
+		#print (bidx, bone.tail, bone.head, bone.tail == bone.head)
+	#print ("leaf bone count=", is_leaf.count(True))
 	bpy.ops.object.mode_set()
+	#if len(parent_list) != len(armt.bones):
+	#	print ("missing bone %d" % (len(parent_list) - len(armt.bones)))
 	return obj

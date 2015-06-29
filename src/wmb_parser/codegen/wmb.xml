@@ -59,7 +59,6 @@
 	
 	<type typename="mesh" log='0' base_module='1'>
 		<require name="offset_vertex_block"/>
-		<require name="num_bone"/>
 		<uint16 name="id" log='0'/>
 		<uint16 name="num_batch" log='0'/>
 		<uint32 name="unknownB" log='0'/>
@@ -87,7 +86,7 @@
 		<uint32 name="offset_index" comment="relative to batch offset"/>
 		<uint32 name="num_index"/>
 		<uint32 name="offset_vertex" comment="relative to vertex block" log='1'/>
-		<list name="unknownI" size="28" log='1'><int8/></list>
+		<list name="unknownI" size="14" log='1'><int16/></list>
 		<int32 name="num_bone" log='1' stat='0'/>
 		<list name="bone_indices" size="num_bone" is_var='1' log='1'><uint8/></list>
 	</type>

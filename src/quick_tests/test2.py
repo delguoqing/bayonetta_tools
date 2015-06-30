@@ -24,9 +24,17 @@ def parse(f):
 		values = get(base_offset + i * 0xc, "6h")
 		print values
 	
+def aux_parse_wmb(f):
+	data = f.read()
+	get = get_getter(data, ">")
+	print "bone_count", get(48, "I")
+	
 if __name__ == '__main__':
 	import sys
 	filepath = sys.argv[1]
 	f = open(filepath, "rb")
-	parse(f)
+	if filepath.endswith(".wmb"):
+		aux_parse_wmb(f)
+	else:
+		parse(f)
 	f.close()

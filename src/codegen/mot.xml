@@ -4,14 +4,14 @@
 		<uint16 name="unk0"/>
 		<uint16 name="unk1"/>
 		<uint32 name="header_size" assert_value='1' value='0x10'/>
-		<uint32 name="num_entry"/>		
+		<uint32 name="num_keyframe"/>		
 	</type>
-	<type typename="entry" base_module='1'>
-		<int16 name="unk0" comment="seems like bone index"/>
-		<int16 name="unk1" comment="bitflag"/>
-		<int16 name="unk2" comment="entry2 size = 12 + unk2 * 4"/>
+	<type typename="keyframe" base_module='1'>
+		<int16 name="bone_index" comment="-1 means root bone, 0x7FFF indicates a null keyframe"/>
+		<int16 name="frame_index"/>
+		<int16 name="unk2" comment="if equals 2, then offset is really strange, float or integer, either one"/>
 		<int16 name="unk3"/>
-		<int16 name="unk4"/>
-		<int16 name="unk5" comment="incremental"/>
+		<uint16 name="unk4"/>
+		<uint16 name="offset"/>
 	</type>
 </format>

@@ -18,12 +18,18 @@ def parse(f):
 	a, b, header_size, entry_count = get(0x4, "HHII")
 	assert header_size == 0x10, "header_size != 0x10"
 	print "%d, %d" % (a, b)
+	entry_end = (header_size + entry_count * 0xc)
+	print "entry_end = %d" % entry_end
 	
 	base_offset = header_size
+	now_off = entry_end
 	for i in xrange(entry_count):
 		values = get(base_offset + i * 0xc, "6h")
 		print values
-	
+		#if i != entry_count - 1:
+		#	assert values[-1] == now_off
+		#now_off += 12 + 4 * values[2]
+		
 def aux_parse_wmb(f):
 	data = f.read()
 	get = get_getter(data, ">")

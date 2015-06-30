@@ -16,7 +16,7 @@
 	
 <!-- generate field strings -->	
 <xsl:template match="format">
-<exsl:document href="g_fields.py" method="text">
+<exsl:document href="g_fields_{/format/@name}_{/format/@ver}.py" method="text">
 DATA = {
 <xsl:for-each select="./*[@base_module]">
 "<xsl:value-of select="@typename"/>": set((&sep;

@@ -13,8 +13,8 @@ def gen(fmt, output_path):
 	transform(xml)
 	
 	fields = None
-	tmp_modules = ("g_fields", )
-	for m in tmp_modules:
+	for filepath in glob.glob("g_fields*.py"):
+		m = os.path.split(filepath)[1][:-3]
 		f = __import__(m).DATA
 		if fields is None:
 			fields = f
@@ -31,6 +31,7 @@ def gen(fmt, output_path):
 	for cls_name, cls_fields in fields.iteritems():
 		ex_m_name = "ex_" + cls_name
 		fname = os.path.join(output_path, ex_m_name + ".py")
+		print "processing %s" % fname
 		if os.path.exists(fname):
 			f = open(fname, "r")
 			data = f.read()
@@ -57,4 +58,5 @@ def clean_up():
 	
 if __name__ == '__main__':
 	gen("wmb", "wmb_parser")
+	gen("mot", "mot_parser")
 	clean_up()

@@ -1,0 +1,17 @@
+<format name="mot" ver="xb" endian="BE">
+	<type typename="mot" base_module='0' log='0'>
+		<string name="FOURCC" size="4" assert_value="1" value="mot"/>
+		<uint16 name="unk0"/>
+		<uint16 name="unk1"/>
+		<uint32 name="header_size" assert_value='1' value='0x10'/>
+		<uint32 name="num_entry"/>		
+	</type>
+	<type typename="entry" base_module='1'>
+		<int16 name="unk0" comment="seems like bone index"/>
+		<int16 name="unk1" comment="bitflag"/>
+		<int16 name="unk2" comment="entry2 size = 12 + unk2 * 4"/>
+		<int16 name="unk3"/>
+		<int16 name="unk4"/>
+		<int16 name="unk5" comment="incremental"/>
+	</type>
+</format>

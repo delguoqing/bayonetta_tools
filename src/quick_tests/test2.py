@@ -19,12 +19,13 @@ def parse(f):
 	assert header_size == 0x10, "header_size != 0x10"
 	print "%d, %d, %d" % (a, b, get(0x4, "I"))
 	entry_end = (header_size + entry_count * 0xc)
-	print "entry_end = %d" % entry_end
+	print "entry_num = %d, entry_end = %d" % (entry_count, entry_end)
 	
 	base_offset = header_size
-	now_off = entry_end
 	last_bone_index = None
 	last_frame_index = None
+	now_off = entry_end
+	offset_list = []
 	for i in xrange(entry_count):
 		values = get(base_offset + i * 0xc, "4h")
 		bone_index = values[0]
@@ -35,14 +36,14 @@ def parse(f):
 			assert frame_index > last_frame_index
 		int_impl = get(base_offset + i * 0xc + 0x8, "I")
 		float_impl = get(base_offset + i * 0xc + 0x8, "f")
-		if int_impl >= len(data):
+		if int_impl >= len(data) or int_impl < now_off:
 			v = float_impl
+			print values[:4], v
 		else:
 			v = int_impl
-		print values[:4], v
-		#if i != entry_count - 1:
-		#	assert values[-1] == now_off, "expect off=%d, off=%d" % (now_off, values[-1])
-		now_off += 12 + 4 * values[2]
+			print values[:4], v
+			assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
+			now_off += 12 + 4 * values[2]
 		last_bone_index = bone_index
 		last_frame_index = frame_index
 		

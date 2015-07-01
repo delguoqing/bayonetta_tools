@@ -20,7 +20,7 @@ def parse(f):
 	print "%d, %d, %d" % (a, b, get(0x4, "I"))
 	entry_end = (header_size + entry_count * 0xc)
 	print "entry_num = %d, entry_end = %d" % (entry_count, entry_end)
-	
+	print "frame data len=%d" % (len(data) - entry_end)
 	base_offset = header_size
 	last_bone_index = None
 	last_frame_index = None
@@ -43,9 +43,39 @@ def parse(f):
 			v = int_impl
 			print values[:4], v
 			assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
-			now_off += 12 + 4 * values[2]
+			f = 1
+			now_off += f * (12 + 4 * values[2])
 		last_bone_index = bone_index
 		last_frame_index = frame_index
+	
+def get_frame_size(f):
+	data = f.read()
+	get = get_getter(data, ">")
+	_, _, header_size, entry_count = get(0x4, "HHII")
+	base_offset = header_size
+	entry_end = (header_size + entry_count * 0xc)	
+	now_off = entry_end
+	size = None
+	beg_off = None
+	beg_n = None
+	for i in xrange(entry_count):
+		values = get(base_offset + i * 0xc, "4h")
+		int_impl = get(base_offset + i * 0xc + 0x8, "I")
+		float_impl = get(base_offset + i * 0xc + 0x8, "f")
+		if now_off <= int_impl < len(data):
+			v = int_impl
+			if v == entry_end:
+				beg_off = entry_end
+				beg_n = values[2]
+				continue
+			if size is None:
+				size = (v - beg_off) / (12 + 4 * beg_n)
+				assert (v - beg_off) % (12 + 4 * beg_n) == 0
+				now_off = v
+			else:
+				assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
+			now_off += size * (12 + 4 * values[2])
+	return size
 		
 def aux_parse_wmb(f):
 	data = f.read()

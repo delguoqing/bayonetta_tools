@@ -1,4 +1,5 @@
 import struct
+import numpy
 
 # makes parsing data a lot easier
 def get_getter(data, endian, force_tuple=False):
@@ -41,13 +42,18 @@ def parse(f):
 			print values[:4], v
 		else:
 			v = int_impl
-			print values[:4], v
-			assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
+			offset_list.append(v)
+			print values[:4], hex(v)
+			#assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
 			f = 1
 			now_off += f * (12 + 4 * values[2])
 		last_bone_index = bone_index
 		last_frame_index = frame_index
 	
+	for off1, off2 in zip(offset_list[:-1], offset_list[1:]):
+		print "offset = 0x%x (%d), size = 0x%x" % (off1, off1, off2 - off1)
+		print numpy.frombuffer(buffer(data[off1: off2]), dtype=numpy.dtype(">f2"))
+		
 def get_frame_size(f):
 	data = f.read()
 	get = get_getter(data, ">")

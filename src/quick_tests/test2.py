@@ -18,7 +18,7 @@ def parse(f):
 	assert FOURCC == "mot\x00", "invalid mot file"
 	a, b, header_size, entry_count = get(0x4, "HHII")
 	assert header_size == 0x10, "header_size != 0x10"
-	print "%d, %d, %d" % (a, b, get(0x4, "I"))
+	print "%d, 0x%x, %d" % (a, b, get(0x4, "I"))
 	entry_end = (header_size + entry_count * 0xc)
 	print "entry_num = %d, entry_end = %d" % (entry_count, entry_end)
 	print "frame data len=%d" % (len(data) - entry_end)
@@ -34,7 +34,7 @@ def parse(f):
 		if bone_index != last_bone_index:
 			print
 		else:
-			assert frame_index > last_frame_index
+			assert frame_index >= last_frame_index
 		int_impl = get(base_offset + i * 0xc + 0x8, "I")
 		float_impl = get(base_offset + i * 0xc + 0x8, "f")
 		if values[2] == 0:
@@ -47,6 +47,12 @@ def parse(f):
 			#assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
 			f = 1
 			now_off += f * (12 + 4 * values[3])
+			
+			if values[2] == 4:
+				print_frame_info_0x4(data, offset_list[-1], values[3])
+			elif values[2] == 6:
+				print_frame_info_0x6(data, offset_list[-1], values[3])
+				
 		last_bone_index = bone_index
 		last_frame_index = frame_index
 	
@@ -54,6 +60,26 @@ def parse(f):
 	#	print "offset = 0x%x (%d), size = 0x%x" % (off1, off1, off2 - off1)
 	#	print numpy.frombuffer(buffer(data[off1: off2]), dtype=numpy.dtype(">f2"))
 		
+def print_frame_info_0x4(data, offset, n):
+	return
+	get = get_getter(data, ">")
+	unk_header_size = 24
+	unk_header = numpy.frombuffer(buffer(data[offset: offset + unk_header_size]),
+								  dtype=numpy.dtype(">f2"))
+	print unk_header
+	
+	offset += unk_header_size
+	for i in xrange(n):
+		base_offset = offset + i * 0x8
+		unk_index, unk1, unk2, unk3 = get(base_offset, "4H")
+		base_offset += 0x2
+		unk_floats = numpy.frombuffer(buffer(data[base_offset : base_offset + 0x6]),
+									  dtype=numpy.dtype(">f2"))
+		print ("0x%x" % unk_index), hex(unk1), hex(unk2), hex(unk3)
+	
+def print_frame_info_0x6(data, offset, n):
+	pass
+
 def check_frame_size(f, log=False):
 	data = f.read()
 	get = get_getter(data, ">")
@@ -62,11 +88,20 @@ def check_frame_size(f, log=False):
 	base_offset = header_size
 	entry_end = (header_size + entry_count * 0xc)	
 	now_off = entry_end
+	last_bone_index = None
+	last_bone_index_track_num = 0
+	
+	max_track_num = 0
 	for i in xrange(entry_count):
 		values = get(base_offset + i * 0xc, "h2b2h")
-		if i == entry_count - 1:
+		
+		if i == entry_count -1:
 			assert values[0] == 0x7FFF
-		elif values[2] == 0:
+			break
+		
+		max_track_num = max(max_track_num, values[1] + 1)
+			
+		if values[2] == 0:
 			values += (get(base_offset + i * 0xc + 0x8, "f"), )
 			if log:
 				print values
@@ -86,7 +121,8 @@ def check_frame_size(f, log=False):
 				now_off += 4 * values[3]
 			else:
 				assert False, "unknown bitflag %d" % values[2]
-			
+
+	return max_track_num			
 			
 def aux_parse_wmb(f):
 	data = f.read()

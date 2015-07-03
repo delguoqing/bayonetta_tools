@@ -4,15 +4,14 @@
 		<uint16 name="unk0"/>
 		<uint16 name="unk1"/>
 		<uint32 name="header_size" assert_value='1' value='0x10'/>
-		<uint32 name="num_keyframe"/>		
+		<uint32 name="num_track"/>		
 	</type>
-	<type typename="keyframe" base_module='1'>
+	<type typename="track" base_module='1'>
 		<int16 name="bone_index" comment="-1 means root bone, 0x7FFF indicates a null keyframe"/>
-		<int8 name="frame_index"/>
-		<int8 name="bitflag" comment="if equals zero, 'offset' is implemented as a float."/>
-		<int16 name="unk2"/>
-		<int16 name="unk3"/>
-		<uint16 name="unk4"/>
-		<uint16 name="offset"/>
+		<int8 name="track_index" comment="enum X, Y, Z, RX, RY, RZ, RW, SX, SY, SZ, what ever"/>
+		<int8 name="lerp_type" comment="if equals zero, then 'value_or_offset' is a constant value, else points to a block of data descripting animation of this value."/>
+		<int16 name="key_count"/>
+		<int16 name="unk0" comment="almost always zero"/>
+		<uint16 name="value_or_offset"/>
 	</type>
 </format>

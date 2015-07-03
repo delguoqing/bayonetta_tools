@@ -8,8 +8,9 @@
 	</type>
 	<type typename="keyframe" base_module='1'>
 		<int16 name="bone_index" comment="-1 means root bone, 0x7FFF indicates a null keyframe"/>
-		<int16 name="frame_index"/>
-		<int16 name="unk2" comment="if equals 2, then offset is really strange, float or integer, either one"/>
+		<int8 name="frame_index"/>
+		<int8 name="bitflag" comment="if equals zero, 'offset' is implemented as a float."/>
+		<int16 name="unk2"/>
 		<int16 name="unk3"/>
 		<uint16 name="unk4"/>
 		<uint16 name="offset"/>

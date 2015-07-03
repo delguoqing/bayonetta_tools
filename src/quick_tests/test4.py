@@ -8,15 +8,11 @@ if __name__ == '__main__':
 		filepath = glob.glob("../../../../bayonetta/*/*/*/*.mot")[index]
 		print "parsing %s" % filepath
 		f = open(filepath, "rb")
-		print test2.get_frame_size(f)
+		test2.check_frame_size(f, log=True)
 		f.close()
 	else:
-		res = {}
 		for i, filepath in enumerate(glob.glob("../../../../bayonetta/*/*/*/*.mot")):
 			print i, "parsing %s" % filepath
 			f = open(filepath, "rb")
-			size = test2.get_frame_size(f)
-			f.close()
-			old_v = res.setdefault(size, 0)
-			res[size] = old_v + 1
-			
+			test2.check_frame_size(f)
+			f.close()			

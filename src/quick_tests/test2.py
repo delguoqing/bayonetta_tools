@@ -28,7 +28,7 @@ def parse(f):
 	now_off = entry_end
 	offset_list = []
 	for i in xrange(entry_count):
-		values = get(base_offset + i * 0xc, "4h")
+		values = get(base_offset + i * 0xc, "h2b2h")
 		bone_index = values[0]
 		frame_index = values[1]
 		if bone_index != last_bone_index:
@@ -37,52 +37,57 @@ def parse(f):
 			assert frame_index > last_frame_index
 		int_impl = get(base_offset + i * 0xc + 0x8, "I")
 		float_impl = get(base_offset + i * 0xc + 0x8, "f")
-		if int_impl >= len(data) or int_impl < now_off:
+		if values[2] == 0:
 			v = float_impl
-			print values[:4], v
+			print values[:5], v
 		else:
 			v = int_impl
 			offset_list.append(v)
-			print values[:4], hex(v)
+			print values[:5], hex(v)
 			#assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
 			f = 1
-			now_off += f * (12 + 4 * values[2])
+			now_off += f * (12 + 4 * values[3])
 		last_bone_index = bone_index
 		last_frame_index = frame_index
 	
-	for off1, off2 in zip(offset_list[:-1], offset_list[1:]):
-		print "offset = 0x%x (%d), size = 0x%x" % (off1, off1, off2 - off1)
-		print numpy.frombuffer(buffer(data[off1: off2]), dtype=numpy.dtype(">f2"))
+	#for off1, off2 in zip(offset_list[:-1], offset_list[1:]):
+	#	print "offset = 0x%x (%d), size = 0x%x" % (off1, off1, off2 - off1)
+	#	print numpy.frombuffer(buffer(data[off1: off2]), dtype=numpy.dtype(">f2"))
 		
-def get_frame_size(f):
+def check_frame_size(f, log=False):
 	data = f.read()
 	get = get_getter(data, ">")
-	_, _, header_size, entry_count = get(0x4, "HHII")
+	a, b, header_size, entry_count = get(0x4, "HHII")
+	#print a, b, 
 	base_offset = header_size
 	entry_end = (header_size + entry_count * 0xc)	
 	now_off = entry_end
-	size = None
-	beg_off = None
-	beg_n = None
 	for i in xrange(entry_count):
-		values = get(base_offset + i * 0xc, "4h")
-		int_impl = get(base_offset + i * 0xc + 0x8, "I")
-		float_impl = get(base_offset + i * 0xc + 0x8, "f")
-		if now_off <= int_impl < len(data):
-			v = int_impl
-			if v == entry_end:
-				beg_off = entry_end
-				beg_n = values[2]
-				continue
-			if size is None:
-				size = (v - beg_off) / (12 + 4 * beg_n)
-				assert (v - beg_off) % (12 + 4 * beg_n) == 0
-				now_off = v
+		values = get(base_offset + i * 0xc, "h2b2h")
+		if i == entry_count - 1:
+			assert values[0] == 0x7FFF
+		elif values[2] == 0:
+			values += (get(base_offset + i * 0xc + 0x8, "f"), )
+			if log:
+				print values
+		else:
+			off = get(base_offset + i * 0xc + 0x8, "I")
+			values += (off, )
+			if log:
+				print values
+			assert off == now_off
+			if values[2] == 4:
+				now_off += 24 + 8 * values[3]
+			elif values[2] == 6:
+				now_off += 12 + 4 * values[3]
+			elif values[2] == 7:
+				now_off += 12 + 6 * values[3]
+			elif values[2] == 1:
+				now_off += 4 * values[3]
 			else:
-				assert now_off == v, "expect off=%d, off=%d" % (now_off, v)
-			now_off += size * (12 + 4 * values[2])
-	return size
-		
+				assert False, "unknown bitflag %d" % values[2]
+			
+			
 def aux_parse_wmb(f):
 	data = f.read()
 	get = get_getter(data, ">")

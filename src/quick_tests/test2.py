@@ -1,5 +1,6 @@
 import struct
 import numpy
+import math
 
 # makes parsing data a lot easier
 def get_getter(data, endian, force_tuple=False):
@@ -105,6 +106,31 @@ def check_frame_size(f, log=False):
 			values += (get(base_offset + i * 0xc + 0x8, "f"), )
 			if log:
 				print values
+			track_index = values[1]
+			
+			########################
+			# check if it's component of a quaternion
+			# no! they're stored as euler angles
+			##########################
+			#if 0 <= track_index < 3:
+			#	assert math.fabs(values[5]) <= 1.0
+
+			###########################			
+			# check if it's component of a scale
+			# definitely a scale
+			###########################
+			#if 7 <= track_index < 10:
+			#	if log:
+			#		print values
+					
+			##########################
+			# check whether 6 is a valid value of track_index
+			# update: yes, not any track_index == 6
+			# 	      may be 6 is rot_w, which can be calculated from rot_x, rot_y, rot_z
+			# update: rotation is stored as euler angles! not quaternion!
+			##########################
+			#assert track_index != 6
+			
 		else:
 			off = get(base_offset + i * 0xc + 0x8, "I")
 			values += (off, )

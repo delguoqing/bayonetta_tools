@@ -8,10 +8,10 @@
 	</type>
 	<type typename="track" base_module='1'>
 		<int16 name="bone_index" comment="-1 means root bone, 0x7FFF indicates a null keyframe"/>
-		<int8 name="track_index" comment="enum X, Y, Z, RX, RY, RZ, RW, SX, SY, SZ, what ever"/>
+		<int8 name="track_index" comment="enum, 0=posX, 1=posY, 2=posZ, 3=RotX, 4=RotY, 5=RotZ(Euler Angles), 7=scaleX, 8=scaleY, 9=scaleZ, "/>
 		<int8 name="lerp_type" comment="if equals zero, then 'value_or_offset' is a constant value, else points to a block of data descripting animation of this value."/>
 		<int16 name="key_count"/>
-		<int16 name="unk0" comment="almost always zero"/>
+		<int16 name="unk0" comment="almost always -1"/>
 		<uint16 name="value_or_offset"/>
 	</type>
 </format>

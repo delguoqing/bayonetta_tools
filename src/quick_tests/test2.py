@@ -1,16 +1,7 @@
 import struct
 import numpy
 import math
-
-# makes parsing data a lot easier
-def get_getter(data, endian, force_tuple=False):
-	def get(offset, fmt):
-		size = struct.calcsize(fmt)
-		res = struct.unpack(endian + fmt, data[offset: offset + size])
-		if not force_tuple and len(res) == 1:
-			return res[0]
-		return res
-	return get
+from util import get_getter, hex_format
 
 def parse(f):
 	data = f.read()
@@ -100,7 +91,6 @@ def print_track_header(values):
 														   key_num, unk, v_text)
 	
 def print_frame_info_0x4(data, offset, n):
-	from util import hex_format
 	get = get_getter(data, ">")
 	unk_header_size = 24
 	for i in xrange(3):
@@ -118,21 +108,35 @@ def print_frame_info_0x4(data, offset, n):
 	print
 	
 def print_frame_info_0x6(data, offset, n):
-	from util import hex_format
-	#print "\t",
-	#print hex_format(data[offset: offset + 12])
+	print_hex = False
+	
+	if print_hex:
+		print "\t",
+		print hex_format(data[offset: offset + 12])
+		
+	header_values = []
 	for i in xrange(3):
 		values = numpy.frombuffer(buffer(data[offset + i * 4: offset + i * 4 + 4]),
 							   dtype=numpy.dtype(">f2"))
-		print "\t",
-		print values
-		
+		if not print_hex:
+			print "\t",
+			print values
+		header_values.append(values)
+	
+	print_hex = True
+	
 	offset += 12
 	frame_idx = 0
 	for i in xrange(n):
 		frame_idx += ord(data[offset + i * 4])
-		print "\t",
-		print "F 0x%02x:\t" % frame_idx, hex_format(data[offset + i * 4: offset + i * 4 + 4])
+		if print_hex:
+			print "\t",
+			print "F 0x%02x:\t" % frame_idx, hex_format(data[offset + i * 4: offset + i * 4 + 4])
+		
+		key_values = [(header_values[j][1] + (header_values[j][0] - header_values[j][1]) * ord(data[offset + i * 4 + j + 1]) / 255.0) for j in xrange(3)]
+		if not print_hex:
+			print "\t",
+			print "F 0x%02x:\t" % frame_idx, key_values		
 	print
 	
 def print_frame_info_0x1(data, offset, n):
@@ -164,7 +168,15 @@ class check_info(object):
 			self.lerp_type6_min_header_value = minv
 		else:
 			self.lerp_type6_min_header_value = min(self.lerp_type6_min_header_value, minv)
-		
+
+		##############################
+		# check if it is the value range for frame info
+		# maybe wrong
+		##############################
+		#for i in xrange(3):
+		#	assert header_values[i * 2] <= header_values[i * 2 + 1]
+		#	assert header_values[i * 2] * header_values[i * 2 + 1] <= 0
+				
 def check_frame_size(f, log=False):
 	data = f.read()
 	get = get_getter(data, ">")
@@ -195,9 +207,10 @@ def check_frame_size(f, log=False):
 			values += (off, )
 			if log:
 				print values
+			key_num = values[3]
 			assert off == now_off
 			if values[2] == 4:
-				now_off += 24 + 8 * values[3]
+				now_off += 24 + 8 * key_num
 				#########################
 				# check header values
 				# False, can't be implemented as float16
@@ -208,15 +221,32 @@ def check_frame_size(f, log=False):
 				#assert not any(numpy.isnan(header_values))
 				
 			elif values[2] == 6:
-				now_off += 12 + 4 * values[3]
-				ci.check_max_key_num(values[3])
+				
+				now_off += 12 + 4 * key_num
+				ci.check_max_key_num(key_num)
 				header_values = numpy.frombuffer(buffer(data[off: off + 0xc]),
 												 dtype=numpy.dtype(">f2"))				
 				ci.check_lerp_type6(header_values)
+				
+				#################################################################
+				# check if both 0x00 and 0xff exists for a value in all keyframes
+				# update: not really
+				#################################################################
+				#max_v = [-1] * 3
+				#min_v = [256] * 3
+				#for j in xrange(key_num):
+				#	v_list = get(off + 0xc + j * 0x4 + 0x1, "BBB")
+				#	for k, v in enumerate(v_list):
+				#		max_v[k] = max(max_v[k], v)
+				#		min_v[k] = min(min_v[k], v)
+				#for k in xrange(3):
+				#	assert (max_v[k] == 0xFF and min_v[k] == 0x00) \
+				#		or (max_v[k] == min_v[k] and max_v[k] == 0x00)
+					
 			elif values[2] == 7:
-				now_off += 12 + 6 * values[3]
+				now_off += 12 + 6 * key_num
 			elif values[2] == 1:
-				now_off += 4 * values[3]
+				now_off += 4 * key_num
 			else:
 				assert False, "unknown bitflag %d" % values[2]
 			ci.check_lerp_type(values[2])

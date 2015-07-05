@@ -1,7 +1,7 @@
 <format name="mot" ver="xb" endian="BE">
 	<type typename="mot" base_module='0' log='0'>
 		<string name="FOURCC" size="4" assert_value="1" value="mot"/>
-		<uint16 name="unk0"/>
+		<uint16 name="is_loop" comment="just a guess, equals 1 or 0"/>
 		<uint16 name="num_frame"/>
 		<uint32 name="header_size" assert_value='1' value='0x10'/>
 		<uint32 name="num_track"/>		

@@ -22,7 +22,6 @@ def parse(f):
 	print "%d, 0x%x, %d" % (a, b, get(0x4, "I"))
 	entry_end = (header_size + entry_count * 0xc)
 	print "entry_num = %d, entry_end = %d" % (entry_count, entry_end)
-	print "frame data len=%d" % (len(data) - entry_end)
 	base_offset = header_size
 	last_bone_index = None
 	last_frame_index = None
@@ -101,7 +100,6 @@ def print_track_header(values):
 														   key_num, unk, v_text)
 	
 def print_frame_info_0x4(data, offset, n):
-	return
 	from util import hex_format
 	get = get_getter(data, ">")
 	unk_header_size = 24
@@ -109,14 +107,14 @@ def print_frame_info_0x4(data, offset, n):
 		unk_f0 = get(offset + i * 0x8, "f")
 		print ("%.4f\t\t" % unk_f0), hex_format(data[offset + i * 0x8 + 0x4: offset + i * 0x8 + 0x8])
 	
-	#offset += unk_header_size
-	#for i in xrange(n):
-	#	base_offset = offset + i * 0x8
-	#	unk_index, unk1, unk2, unk3 = get(base_offset, "4H")
-	#	base_offset += 0x2
-	#	unk_floats = numpy.frombuffer(buffer(data[base_offset : base_offset + 0x6]),
-	#								  dtype=numpy.dtype(">f2"))
-	#	print ("F 0x%02x:\t\t" % unk_index), hex(unk1), hex(unk2), hex(unk3)
+	offset += unk_header_size
+	for i in xrange(n):
+		base_offset = offset + i * 0x8
+		unk_index, unk1, unk2, unk3 = get(base_offset, "4H")
+		base_offset += 0x2
+		unk_floats = numpy.frombuffer(buffer(data[base_offset : base_offset + 0x6]),
+									  dtype=numpy.dtype(">f2"))
+		print ("F 0x%02x:\t\t" % unk_index), hex(unk1), hex(unk2), hex(unk3)
 	print
 	
 def print_frame_info_0x6(data, offset, n):
@@ -130,9 +128,11 @@ def print_frame_info_0x6(data, offset, n):
 		print values
 		
 	offset += 12
+	frame_idx = 0
 	for i in xrange(n):
+		frame_idx += ord(data[offset + i * 4])
 		print "\t",
-		print hex_format(data[offset + i * 4: offset + i * 4 + 4])
+		print "F 0x%02x:\t" % frame_idx, hex_format(data[offset + i * 4: offset + i * 4 + 4])
 	print
 	
 def print_frame_info_0x1(data, offset, n):
@@ -198,16 +198,20 @@ def check_frame_size(f, log=False):
 			assert off == now_off
 			if values[2] == 4:
 				now_off += 24 + 8 * values[3]
+				#########################
+				# check header values
+				# False, can't be implemented as float16
+				#########################
+				#header_values = numpy.frombuffer(buffer(data[off: off + 0x18]),
+				#								 dtype=numpy.dtype(">f2"))
+				#print header_values
+				#assert not any(numpy.isnan(header_values))
+				
 			elif values[2] == 6:
 				now_off += 12 + 4 * values[3]
 				ci.check_max_key_num(values[3])
-				
-				#########################
-				# check header values
-				#########################
 				header_values = numpy.frombuffer(buffer(data[off: off + 0xc]),
-												 dtype=numpy.dtype(">f2"))
-				assert not any(numpy.isnan(header_values))
+												 dtype=numpy.dtype(">f2"))				
 				ci.check_lerp_type6(header_values)
 			elif values[2] == 7:
 				now_off += 12 + 6 * values[3]

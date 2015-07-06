@@ -91,6 +91,7 @@ def print_track_header(values):
 														   key_num, unk, v_text)
 	
 def print_frame_info_0x4(data, offset, n):
+	return
 	get = get_getter(data, ">")
 	unk_header_size = 24
 	for i in xrange(3):
@@ -123,7 +124,7 @@ def print_frame_info_0x6(data, offset, n):
 			print values
 		header_values.append(values)
 	
-	print_hex = True
+	print_hex = False
 	
 	offset += 12
 	frame_idx = 0
@@ -134,9 +135,10 @@ def print_frame_info_0x6(data, offset, n):
 			print "F 0x%02x:\t" % frame_idx, hex_format(data[offset + i * 4: offset + i * 4 + 4])
 		
 		key_values = [(header_values[j][1] + (header_values[j][0] - header_values[j][1]) * ord(data[offset + i * 4 + j + 1]) / 255.0) for j in xrange(3)]
+		key_values = ["%.2f" % (ord(data[offset + i * 4 + j + 1]) / 255.0) for j in xrange(3)]
 		if not print_hex:
 			print "\t",
-			print "F 0x%02x:\t" % frame_idx, key_values		
+			print "F %d:\t" % frame_idx, key_values		
 	print
 	
 def print_frame_info_0x1(data, offset, n):
@@ -150,7 +152,9 @@ class check_info(object):
 		self.lerp_types = set()
 		self.max_key_num = 0
 		self.lerp_type6_max_header_value = None
-		self.lerp_type6_min_header_value = None		
+		self.lerp_type6_min_header_value = None
+		self.rot_max = None
+		self.rot_min = None
 	def check_max_track_num(self, v):
 		self.max_track_num = max(self.max_track_num, v)
 	def check_max_key_num(self, v):
@@ -176,6 +180,14 @@ class check_info(object):
 		#for i in xrange(3):
 		#	assert header_values[i * 2] <= header_values[i * 2 + 1]
 		#	assert header_values[i * 2] * header_values[i * 2 + 1] <= 0
+	def check_rot_value(self, value):
+		if self.rot_max is None:
+			self.rot_max = value
+		else:
+			self.rot_max = max(self.rot_max, value)
+		if self.rot_min is None:
+			self.rot_min = value
+			self.rot_min = min(self.rot_min, value)
 				
 def check_frame_size(f, log=False):
 	data = f.read()
@@ -202,6 +214,8 @@ def check_frame_size(f, log=False):
 			values += (get(base_offset + i * 0xc + 0x8, "f"), )
 			if log:
 				print values
+			if 3 <= values[1] < 6:
+				ci.check_rot_value(values[5])
 		else:
 			off = get(base_offset + i * 0xc + 0x8, "I")
 			values += (off, )
@@ -248,7 +262,7 @@ def check_frame_size(f, log=False):
 			elif values[2] == 1:
 				now_off += 4 * key_num
 			else:
-				assert False, "unknown bitflag %d" % values[2]
+				assert False, "unknown lerp type %d" % values[2]
 			ci.check_lerp_type(values[2])
 	return ci
 			

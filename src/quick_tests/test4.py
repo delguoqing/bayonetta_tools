@@ -38,6 +38,14 @@ def print_rot_value_max_min(all_ci):
 			minv = min(minv, ci.rot_min)
 	print "rot immediate value min-max", minv, maxv
 	
+def print_lerp_type4_filename_sort_by_size(all_ci):
+	def my_cmp(ci1, ci2):
+		return cmp(ci1.filesize, ci2.filesize)
+	all_ci.sort(cmp=my_cmp)
+	for ci in all_ci:
+		if ci.has_lerp_type4:
+			print ci.file_index, "parsed %s, filesize=%d" % (ci.filepath, ci.filesize)
+
 if __name__ == '__main__':
 	if len(sys.argv) > 1:
 		index = int(sys.argv[1])
@@ -50,9 +58,15 @@ if __name__ == '__main__':
 	else:
 		all_ci = []
 		for i, filepath in enumerate(glob.glob("../../../../bayonetta/*/*/*/*.mot")):
-			print i, "parsing %s" % filepath
+			#print i, "parsing %s" % filepath
 			f = open(filepath, "rb")
+			f.seek(0, 2)
+			filesize = f.tell()
+			f.seek(0)			
 			ci = test2.check_frame_size(f)
+			ci.filepath = filepath
+			ci.file_index = i
+			ci.filesize = filesize
 			f.close()
 			all_ci.append(ci)
 
@@ -61,9 +75,13 @@ if __name__ == '__main__':
 			################
 			#if ci.max_key_num > 40:
 			#	break
-
 			#if 0x1 in ci.lerp_types:
 			#	print i, "parsed %s" % filepath
+			#if ci.has_lerp_type4:
+			#	print i, "parsed %s, filesize=%d" % (filepath, filesize)
+			#if ci.has_lerp_type6:
+			#	assert not (ci.has_lerp_type4 and ci.has_lerp_type6)
+			#	print i, "parsed %s, filesize=%d" % (filepath, filesize)
 
 	#################
 	# print out useful info
@@ -71,4 +89,5 @@ if __name__ == '__main__':
 	#print_track_num_enum(all_ci)
 	#print_max_key_num_enum(all_ci)
 	#print_lerp_type6_header_max_min(all_ci)
-	print_rot_value_max_min(all_ci)
+	#print_rot_value_max_min(all_ci)
+	print_lerp_type4_filename_sort_by_size(all_ci)

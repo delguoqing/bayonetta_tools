@@ -91,13 +91,12 @@ def print_track_header(values):
 														   key_num, unk, v_text)
 	
 def print_frame_info_0x4(data, offset, n):
-	return
 	get = get_getter(data, ">")
 	unk_header_size = 24
 	for i in xrange(3):
 		unk_f0 = get(offset + i * 0x8, "f")
 		print ("%.4f\t\t" % unk_f0), hex_format(data[offset + i * 0x8 + 0x4: offset + i * 0x8 + 0x8])
-	
+
 	offset += unk_header_size
 	for i in xrange(n):
 		base_offset = offset + i * 0x8
@@ -109,7 +108,7 @@ def print_frame_info_0x4(data, offset, n):
 	print
 	
 def print_frame_info_0x6(data, offset, n):
-	print_hex = False
+	print_hex = True
 	
 	if print_hex:
 		print "\t",
@@ -124,6 +123,8 @@ def print_frame_info_0x6(data, offset, n):
 			print values
 		header_values.append(values)
 	
+	return
+
 	print_hex = False
 	
 	offset += 12
@@ -134,11 +135,13 @@ def print_frame_info_0x6(data, offset, n):
 			print "\t",
 			print "F 0x%02x:\t" % frame_idx, hex_format(data[offset + i * 4: offset + i * 4 + 4])
 		
-		key_values = [(header_values[j][1] + (header_values[j][0] - header_values[j][1]) * ord(data[offset + i * 4 + j + 1]) / 255.0) for j in xrange(3)]
+		key_values = [(header_values[j][0] + (header_values[j][1] - header_values[j][0]) * ord(data[offset + i * 4 + j + 1]) / 255.0) for j in xrange(3)]
+		#print "\t", "F %d:\t" % frame_idx, sum(key_values)
+		
 		key_values = ["%.2f" % (ord(data[offset + i * 4 + j + 1]) / 255.0) for j in xrange(3)]
 		if not print_hex:
 			print "\t",
-			print "F %d:\t" % frame_idx, key_values		
+			print "F %d:\t" % frame_idx, key_values	
 	print
 	
 def print_frame_info_0x1(data, offset, n):
@@ -155,6 +158,8 @@ class check_info(object):
 		self.lerp_type6_min_header_value = None
 		self.rot_max = None
 		self.rot_min = None
+		self.has_lerp_type4 = False
+		self.has_lerp_type6 = False
 	def check_max_track_num(self, v):
 		self.max_track_num = max(self.max_track_num, v)
 	def check_max_key_num(self, v):
@@ -180,6 +185,7 @@ class check_info(object):
 		#for i in xrange(3):
 		#	assert header_values[i * 2] <= header_values[i * 2 + 1]
 		#	assert header_values[i * 2] * header_values[i * 2 + 1] <= 0
+		self.has_lerp_type6 = True
 	def check_rot_value(self, value):
 		if self.rot_max is None:
 			self.rot_max = value
@@ -188,7 +194,9 @@ class check_info(object):
 		if self.rot_min is None:
 			self.rot_min = value
 			self.rot_min = min(self.rot_min, value)
-				
+	def check_lerp_type4(self):
+		self.has_lerp_type4 = True
+		
 def check_frame_size(f, log=False):
 	data = f.read()
 	get = get_getter(data, ">")
@@ -233,7 +241,7 @@ def check_frame_size(f, log=False):
 				#								 dtype=numpy.dtype(">f2"))
 				#print header_values
 				#assert not any(numpy.isnan(header_values))
-				
+				ci.check_lerp_type4()
 			elif values[2] == 6:
 				
 				now_off += 12 + 4 * key_num
@@ -256,7 +264,9 @@ def check_frame_size(f, log=False):
 				#for k in xrange(3):
 				#	assert (max_v[k] == 0xFF and min_v[k] == 0x00) \
 				#		or (max_v[k] == min_v[k] and max_v[k] == 0x00)
-					
+				#for j in xrange(2):
+				#	assert math.fabs(header_values[j * 2]) >= math.fabs(header_values[j * 2 + 2])
+				#	assert math.fabs(header_values[j * 2 + 1]) >= math.fabs(header_values[j * 2 + 1 + 2])
 			elif values[2] == 7:
 				now_off += 12 + 6 * key_num
 			elif values[2] == 1:
